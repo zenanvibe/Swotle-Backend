@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const dbconn = require("./config/db.config");
+const cors = require("cors"); // Import cors module
+
 dotenv.config();
 
 const app = express();
@@ -13,6 +15,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
 // define a root route
+app.use(cors());
+
 app.get("/", (req, res) => {
   res.status(412);
   res.send("No permission to view this");

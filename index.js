@@ -1,12 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
-const dbconn = require("./config/db.config")
+const dbconn = require("./config/db.config");
 dotenv.config();
 
 const app = express();
 
-const port = process.env.PORT || 3030;
+const port = 5000 || 3306;
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,12 +33,8 @@ app.get("/dbcheck", (req, res) => {
 // Importing Routes
 const generateRoutes = require("./src/routes/generate.routes");
 
-
 // using as middleware
 app.use("/api/v1/generate", generateRoutes);
-
-
-
 
 // listen for requests
 app.listen(port, () => {

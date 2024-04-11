@@ -36,9 +36,11 @@ app.get("/dbcheck", (req, res) => {
 
 // Importing Routes
 const generateRoutes = require("./src/routes/generate.routes");
+const authRoutes = require("./src/routes/user.routes");
 
 // using as middleware
 app.use("/api/v1/generate", generateRoutes);
+app.use("/api/v1/users", authRoutes);
 
 // listen for requests
 app.listen(port, () => {

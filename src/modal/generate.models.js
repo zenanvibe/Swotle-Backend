@@ -97,6 +97,31 @@ const TraitModel = {
       });
     });
   },
+  getThinkingPatterns: () => {
+    return new Promise((resolve, reject) => {
+      const queryPattern = "SELECT name FROM thinking_pattern;";
+      const queryType = "SELECT name FROM thinking_pattern_type;";
+
+      db.query(queryPattern, (errPattern, resultsPattern) => {
+        if (errPattern) {
+          reject(errPattern);
+          return;
+        }
+
+        db.query(queryType, (errType, resultsType) => {
+          if (errType) {
+            reject(errType);
+            return;
+          }
+
+          const patternNames = resultsPattern.map((row) => row.name);
+          const typeNames = resultsType.map((row) => row.name);
+
+          resolve({ patternNames, typeNames });
+        });
+      });
+    });
+  },
 };
 
 module.exports = TraitModel;

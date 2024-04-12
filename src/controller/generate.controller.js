@@ -162,6 +162,16 @@ const TraitController = {
         res.status(500).send("Error fetching negative traits");
       });
   },
+  getThinkingPatterns: (req, res) => {
+    TraitModel.getThinkingPatterns()
+      .then((results) => {
+        res.json(results);
+      })
+      .catch((error) => {
+        console.error("Error fetching thinking patterns:", error);
+        res.status(500).json({ error: "Error fetching thinking patterns" });
+      });
+  },
 };
 
 module.exports = TraitController;

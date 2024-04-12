@@ -52,7 +52,7 @@ const TraitModel = {
   getPositiveTraits: () => {
     return new Promise((resolve, reject) => {
       const query = `
-            SELECT t.name AS trait, t.classification AS trait_classification
+            SELECT t.id AS id, t.name AS label 
             FROM trait t
             LEFT JOIN description d ON t.id = d.trait_id
             WHERE t.classification = 1
@@ -76,7 +76,7 @@ const TraitModel = {
   getNegativeTraits: () => {
     return new Promise((resolve, reject) => {
       const query = `
-            SELECT t.name AS trait, t.classification AS trait_classification
+            SELECT t.id AS id, t.name AS label 
             FROM trait t
             LEFT JOIN description d ON t.id = d.trait_id
             WHERE t.classification = 0

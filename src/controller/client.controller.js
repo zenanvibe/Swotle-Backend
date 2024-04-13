@@ -7,15 +7,15 @@ const userController = {
     console.log(req.body);
     try {
       //   Check if the user already exists
-      const userExists = await clientModel.checkUserExists(email, phone);
-      if (userExists) {
-        console.log(
-          `User with the same email or phone already exists.${email},${phone}`
-        );
-        return res.status(400).json({
-          message: "User with the same email or phone already exists.",
-        });
-      }
+      // const userExists = await clientModel.checkUserExists(email, phone);
+      // if (userExists) {
+      //   console.log(
+      //     `User with the same email or phone already exists.${email},${phone}`
+      //   );
+      //   return res.status(400).json({
+      //     message: "User with the same email or phone already exists.",
+      //   });
+      // }
 
       // Create a new user
       const password = "aaaabbbb";

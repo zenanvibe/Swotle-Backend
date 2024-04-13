@@ -122,9 +122,39 @@ const TraitModel = {
       });
     });
   },
-  // postTraitAnalysis: () => {
-  //   return new Promise((resolve, reject) => {});
-  // },
+  postTraitAnalysis: (reportId, selectedTraits) => {
+    return new Promise((resolve, reject) => {
+      // First, insert the selected traits
+      const insertValues = selectedTraits.map((traitId) => [reportId, traitId]);
+      const insertSql =
+        "INSERT INTO trait_analysis (report_id, trait_id) VALUES ?";
+
+      db.query(insertSql, [insertValues], (insertErr, insertResults) => {
+        if (insertErr) {
+          console.error("Error inserting Trait Analysis:", insertErr);
+          reject(insertErr);
+          return;
+        }
+
+        // If insertion is successful, then fetch details
+        const selectSql = `
+                SELECT t.name AS trait, d.description, t.classification AS trait_classification
+                FROM trait t
+                LEFT JOIN description d ON t.id = d.trait_id
+                WHERE t.id IN (?)
+            `;
+
+        db.query(selectSql, [selectedTraits], (selectErr, selectResults) => {
+          if (selectErr) {
+            console.error("Error selecting Trait Analysis details:", selectErr);
+            reject(selectErr);
+          } else {
+            resolve(selectResults);
+          }
+        });
+      });
+    });
+  },
 };
 
 module.exports = TraitModel;

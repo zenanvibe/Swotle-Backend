@@ -8,5 +8,6 @@ router.post("/generatePDF", traitController.getTraitspdf);
 router.get("/positivetraits", traitController.getPositiveTraits);
 router.get("/negativetraits", traitController.getNegativeTraits);
 router.get("/get_thinking_patterns", traitController.getThinkingPatterns);
+router.post("/post_trait_analysis", traitController.postTraitAnalysis);
 
 module.exports = router;

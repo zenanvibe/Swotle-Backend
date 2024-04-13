@@ -172,6 +172,16 @@ const TraitController = {
         res.status(500).json({ error: "Error fetching thinking patterns" });
       });
   },
+  // postTraitAnalysis: (req, res) => {
+  //   TraitModel.postTraitAnalysis()
+  //     .then((results) => {
+  //       res.json(results);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error posting Trait Analysis:", error);
+  //       res.status(500).json({ error: "Error fetching thinking patterns" });
+  //     });
+  // },
 };
 
 module.exports = TraitController;

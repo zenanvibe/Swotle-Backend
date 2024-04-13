@@ -122,6 +122,9 @@ const TraitModel = {
       });
     });
   },
+  // postTraitAnalysis: () => {
+  //   return new Promise((resolve, reject) => {});
+  // },
 };
 
 module.exports = TraitModel;

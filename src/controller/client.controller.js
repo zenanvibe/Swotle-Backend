@@ -1,12 +1,13 @@
-const userModel = require("../modal/user.modal");
+const clientModel = require("../modal/client.model");
 
 const userController = {
   signup: async (req, res) => {
-    const { name, email, phone, password } = req.body;
+    const { name, email, phone } = req.body;
 
+    console.log(req.body);
     try {
-      // Check if the user already exists
-      const userExists = await userModel.checkUserExists(email, phone);
+      //   Check if the user already exists
+      const userExists = await clientModel.checkUserExists(email, phone);
       if (userExists) {
         console.log(
           `User with the same email or phone already exists.${email},${phone}`
@@ -17,19 +18,23 @@ const userController = {
       }
 
       // Create a new user
+      const password = "aaaabbbb";
       const {
         userId,
         email: createdEmail,
         name: createdName,
-      } = await userModel.createUser(name, email, phone, password);
+      } = await clientModel.createUser(name, email, phone, password);
 
       // Generate JWT token
+      console.log(createdEmail);
 
-      const token = userModel.generateJWT(userId, createdEmail, createdName);
+      const token = clientModel.generateJWT(userId, createdEmail, createdName);
 
+      //   console.log(token);
       console.log(`User signed up successfully. User ID: ${userId}`);
       //   res.status(201).json({ userId, token });
-      res.status(201).json({ userId });
+
+      res.status(201).json({ userId, token });
     } catch (error) {
       console.log(`Error signing up user: ${error.message}`);
       res.status(500).json({ message: "Internal Server Error" });
@@ -40,7 +45,7 @@ const userController = {
     const { email, password } = req.body;
     try {
       // Check if the user exists
-      const user = await userModel.loginUser(email, password);
+      const user = await clientModel.loginUser(email, password);
       if (!user) {
         return res
           .status(401)
@@ -48,7 +53,7 @@ const userController = {
       }
 
       // Generate JWT token
-      const token = userModel.generateJWT(
+      const token = clientModel.generateJWT(
         user.id,
         user.email,
         user.name,
@@ -62,43 +67,43 @@ const userController = {
     }
   },
 
-  adminLogin: async (req, res) => {
-    const { email, password } = req.body;
+  //   adminLogin: async (req, res) => {
+  //     const { email, password } = req.body;
 
-    try {
-      // Check if the user exists
-      const user = await userModel.adminLoginUser(email, password);
-      if (!user) {
-        console.log(
-          `Invalid email or password during login attempt email:${email}.`
-        );
-        return res.status(401).json({ message: "Invalid email or password." });
-      }
+  //     try {
+  //       // Check if the user exists
+  //       const user = await clientModel.adminLoginUser(email, password);
+  //       if (!user) {
+  //         console.log(
+  //           `Invalid email or password during login attempt email:${email}.`
+  //         );
+  //         return res.status(401).json({ message: "Invalid email or password." });
+  //       }
 
-      // Generate JWT token
-      const token = userModel.generateJWT(
-        user.id,
-        user.email,
-        user.name,
-        user.role,
-        user.store_id
-      );
+  //       // Generate JWT token
+  //       const token = clientModel.generateJWT(
+  //         user.id,
+  //         user.email,
+  //         user.name,
+  //         user.role,
+  //         user.store_id
+  //       );
 
-      console.log(`User logged in successfully. User ID: ${user.id}`);
-      res.status(200).json({
-        userId: user.id,
-        store_id: user.store_id,
-        token,
-      });
-    } catch (error) {
-      console.log(`Error logging in user: ${error.message}`);
-      res.status(500).json({ message: "Internal Server Error" });
-    }
-  },
+  //       console.log(`User logged in successfully. User ID: ${user.id}`);
+  //       res.status(200).json({
+  //         userId: user.id,
+  //         store_id: user.store_id,
+  //         token,
+  //       });
+  //     } catch (error) {
+  //       console.log(`Error logging in user: ${error.message}`);
+  //       res.status(500).json({ message: "Internal Server Error" });
+  //     }
+  //   },
 
   getAllUsers: async (req, res) => {
     try {
-      const users = await userModel.getAllUsers();
+      const users = await clientModel.getAllUsers();
       res.status(200).json(users);
     } catch (error) {
       console.error(error);
@@ -112,7 +117,7 @@ const userController = {
     const userId = req.params.userId; // Assuming you have the user ID in the request parameters
     const updatedData = req.body; // Assuming the updated data is sent in the request body
     try {
-      const userExists = await userModel.checkUserExists(
+      const userExists = await clientModel.checkUserExists(
         updatedData.email,
         updatedData.phone
       );
@@ -125,7 +130,7 @@ const userController = {
         });
       }
 
-      await userModel.updateUser(userId, updatedData);
+      await clientModel.updateUser(userId, updatedData);
       res.status(200).json({ message: "User updated successfully" });
     } catch (error) {
       console.log(`Error updating user: ${error.message}`);
@@ -137,7 +142,7 @@ const userController = {
     const userId = req.params.userId;
     console.log(userId); // Assuming you have the user ID in the request parameters
     try {
-      const userinfo = await userModel.getUserInfo(userId);
+      const userinfo = await clientModel.getUserInfo(userId);
       res.status(200).json(userinfo);
     } catch (error) {
       console.log(error);
@@ -150,7 +155,7 @@ const userController = {
     const userId = req.params.userId;
     console.log(userId); // Assuming you have the user ID in the request parameters
     try {
-      const userinfo = await userModel.deleteUser(userId);
+      const userinfo = await clientModel.deleteUser(userId);
       res.status(200).json({ message: "User deleted successfully" });
     } catch (error) {
       console.log(error);

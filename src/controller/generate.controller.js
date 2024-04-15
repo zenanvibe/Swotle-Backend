@@ -181,8 +181,9 @@ const TraitController = {
       .then((results) => {
         const positiveTraits = [];
         const negativeTraits = [];
+        const reportAnalysis = [];
 
-        results.forEach((row) => {
+        results.traitResults.forEach((row) => {
           if (row.trait_classification === 1 && row.description) {
             positiveTraits.push({
               trait: row.trait,
@@ -195,8 +196,26 @@ const TraitController = {
             });
           }
         });
+        reportAnalysis.push(results.reportData);
 
-        res.json({ positiveTraits, negativeTraits }); // Send JSON response
+        res.json({ positiveTraits, negativeTraits, reportAnalysis }); // Send JSON response
+      })
+      .catch((error) => {
+        console.error("Error posting Trait Analysis:", error);
+        res.status(500).json({ error: "Error posting Trait Analysis" });
+      });
+  },
+  postTAnalysisReport: (req, res) => {
+    const { report_id, thinking_pattern, Energy, Emotional, Goal } = req.body; // Assuming these fields match your JSON
+    TraitModel.postTAnalysisReport(
+      report_id,
+      thinking_pattern,
+      Energy,
+      Emotional,
+      Goal
+    )
+      .then((results) => {
+        res.json("Data Inserted Successfully"); // Send JSON response
       })
       .catch((error) => {
         console.error("Error posting Trait Analysis:", error);

@@ -122,37 +122,142 @@ const TraitModel = {
       });
     });
   },
+  // postTraitAnalysis: (reportId, selectedTraits) => {
+  //   return new Promise((resolve, reject) => {
+  //     // First, insert the selected traits
+  //     const insertValues = selectedTraits.map((traitId) => [reportId, traitId]);
+  //     const insertSql =
+  //       "INSERT INTO trait_analysis (report_id, trait_id) VALUES ?";
+
+  //     db.query(insertSql, [insertValues], (insertErr, insertResults) => {
+  //       if (insertErr) {
+  //         console.error("Error inserting Trait Analysis:", insertErr);
+  //         reject(insertErr);
+  //         return;
+  //       }
+
+  //       // If insertion is successful, then fetch trait details
+  //       const selectTraitsSql = `
+  //               SELECT t.name AS trait, d.description, t.classification AS trait_classification
+  //               FROM trait t
+  //               LEFT JOIN description d ON t.id = d.trait_id
+  //               WHERE t.id IN (?)
+  //           `;
+
+  //       db.query(
+  //         selectTraitsSql,
+  //         [selectedTraits],
+  //         (selectErr, selectResults) => {
+  //           if (selectErr) {
+  //             console.error(
+  //               "Error selecting Trait Analysis details:",
+  //               selectErr
+  //             );
+  //             reject(selectErr);
+  //             return;
+  //           }
+
+  //           // Fetch analysis report data
+  //           const selectReportSql = `
+  //               SELECT * FROM analysis_report WHERE id = ?
+  //           `;
+  //           db.query(
+  //             selectReportSql,
+  //             [reportId],
+  //             (reportErr, reportResults) => {
+  //               if (reportErr) {
+  //                 console.error(
+  //                   "Error selecting Analysis Report details:",
+  //                   reportErr
+  //                 );
+  //                 reject(reportErr);
+  //                 return;
+  //               }
+
+  //               // Resolve with both trait details and analysis report data
+  //               resolve({
+  //                 traitResults: selectResults,
+  //                 reportData: reportResults,
+  //               });
+  //             }
+  //           );
+  //         }
+  //       );
+  //     });
+  //   });
+  // },
   postTraitAnalysis: (reportId, selectedTraits) => {
     return new Promise((resolve, reject) => {
-      // First, insert the selected traits
-      const insertValues = selectedTraits.map((traitId) => [reportId, traitId]);
-      const insertSql =
-        "INSERT INTO trait_analysis (report_id, trait_id) VALUES ?";
-
-      db.query(insertSql, [insertValues], (insertErr, insertResults) => {
-        if (insertErr) {
-          console.error("Error inserting Trait Analysis:", insertErr);
-          reject(insertErr);
+      // Fetch analysis report data
+      const selectReportSql = `
+            SELECT thinking_pattern,energy,emotional,goal FROM analysis_report WHERE report_id = ?
+        `;
+      db.query(selectReportSql, [reportId], (reportErr, reportResults) => {
+        if (reportErr) {
+          console.error("Error selecting Analysis Report details:", reportErr);
+          reject(reportErr);
           return;
         }
 
-        // If insertion is successful, then fetch details
-        const selectSql = `
-                SELECT t.name AS trait, d.description, t.classification AS trait_classification
-                FROM trait t
-                LEFT JOIN description d ON t.id = d.trait_id
-                WHERE t.id IN (?)
-            `;
+        // Check if reportResults is empty or not
+        if (reportResults.length === 0) {
+          reject("No analysis report found for the provided reportId.");
+          return;
+        }
 
-        db.query(selectSql, [selectedTraits], (selectErr, selectResults) => {
-          if (selectErr) {
-            console.error("Error selecting Trait Analysis details:", selectErr);
-            reject(selectErr);
-          } else {
-            resolve(selectResults);
+        // Now proceed with fetching trait details
+        const selectTraitsSql = `
+                    SELECT t.name AS trait, d.description, t.classification AS trait_classification
+                    FROM trait t
+                    LEFT JOIN description d ON t.id = d.trait_id
+                    WHERE t.id IN (?)
+                `;
+
+        db.query(
+          selectTraitsSql,
+          [selectedTraits],
+          (selectErr, selectResults) => {
+            if (selectErr) {
+              console.error(
+                "Error selecting Trait Analysis details:",
+                selectErr
+              );
+              reject(selectErr);
+              return;
+            }
+
+            // Resolve with both trait details and analysis report data
+            resolve({
+              traitResults: selectResults,
+              reportData: reportResults[0],
+            });
           }
-        });
+        );
       });
+    });
+  },
+
+  postTAnalysisReport: (
+    report_id,
+    thinking_pattern,
+    energy,
+    emotional,
+    goal
+  ) => {
+    return new Promise((resolve, reject) => {
+      const query =
+        "INSERT INTO analysis_report (report_id, thinking_pattern, energy, emotional, goal) VALUES (?, ?, ?, ?, ?)";
+      db.query(
+        query,
+        [report_id, thinking_pattern, energy, emotional, goal],
+        (error, results) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(results);
+          }
+        }
+      );
     });
   },
 };

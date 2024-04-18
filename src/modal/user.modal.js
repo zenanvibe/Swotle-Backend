@@ -9,7 +9,7 @@ const User = {
     const status = 1; // or set to your desired default status
     const role = 1;
     const query =
-      "INSERT INTO Users (name, email, phone, password, status, role) VALUES (?, ?, ?, ?, ?, ?)";
+      "INSERT INTO users (name, email, phone, password, status, role) VALUES (?, ?, ?, ?, ?, ?)";
     const values = [name, email, phone, hashedPassword, status, role];
 
     return new Promise((resolve, reject) => {
@@ -22,7 +22,7 @@ const User = {
 
   loginUser: async (email, password) => {
     const query =
-      "SELECT id,name,password,status,phone,role FROM Users WHERE email = ?";
+      "SELECT id,name,password,status,phone,role FROM users WHERE email = ?";
     const values = [email];
 
     return new Promise((resolve, reject) => {
@@ -45,7 +45,7 @@ const User = {
 
   adminLoginUser: async (email, password) => {
     const query =
-      "SELECT U.user_id, U.name, U.password, U.status, U.phone, U.role, S.store_id FROM Users U JOIN Stores S ON U.user_id = S.merchant_id WHERE U.email = ?";
+      "SELECT U.user_id, U.name, U.password, U.status, U.phone, U.role, S.store_id FROM users U JOIN Stores S ON U.user_id = S.merchant_id WHERE U.email = ?";
     const values = [email];
 
     return new Promise((resolve, reject) => {
@@ -67,7 +67,7 @@ const User = {
   },
 
   checkUserExists: (email, phone) => {
-    const query = "SELECT id FROM Users WHERE email = ? OR phone = ?";
+    const query = "SELECT id FROM users WHERE email = ? OR phone = ?";
     const values = [email, phone];
 
     return new Promise((resolve, reject) => {
@@ -89,8 +89,8 @@ const User = {
     return token;
   },
 
-  getAllUsers: () => {
-    const query = "SELECT user_id, name, email, status, phone FROM Users";
+  getAllusers: () => {
+    const query = "SELECT user_id, name, email, status, phone FROM users";
     return new Promise((resolve, reject) => {
       db.query(query, (err, result) => {
         if (err) {
@@ -104,7 +104,7 @@ const User = {
 
   getUserInfo: (userId) => {
     const query =
-      "SELECT name, email, status, phone FROM Users WHERE user_id = ?";
+      "SELECT name, email, status, phone FROM users WHERE user_id = ?";
     return new Promise((resolve, reject) => {
       db.query(query, userId, (err, result) => {
         if (err) {
@@ -117,7 +117,7 @@ const User = {
   },
 
   updateUser: (userId, updatedData) => {
-    const query = "UPDATE Users SET ? WHERE user_id = ?";
+    const query = "UPDATE users SET ? WHERE user_id = ?";
     return new Promise((resolve, reject) => {
       db.query(query, [updatedData, userId], (err, result) => {
         if (err) {
@@ -132,7 +132,7 @@ const User = {
   deleteUser: (userId) => {
     const currentDateTime = new Date();
     const query =
-      "UPDATE Users SET status='deactive', deleted_At=? WHERE user_id = ?";
+      "UPDATE users SET status='deactive', deleted_At=? WHERE user_id = ?";
 
     return new Promise((resolve, reject) => {
       db.query(query, [currentDateTime, userId], (err, result) => {

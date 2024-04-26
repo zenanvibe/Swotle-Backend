@@ -241,13 +241,14 @@ const TraitController = {
       });
   },
   postTAnalysisReport: (req, res) => {
-    const { report_id, thinking_pattern, Energy, Emotional, Goal } = req.body; // Assuming these fields match your JSON
+    const { report_id, thinking_pattern, energy, emotional, goal } = req.body; // Assuming these fields match your JSON
+    console.log(req.body)
     TraitModel.postTAnalysisReport(
       report_id,
       thinking_pattern,
-      Energy,
-      Emotional,
-      Goal
+      energy,
+      emotional,
+      goal
     )
       .then((results) => {
         res.json("Data Inserted Successfully"); // Send JSON response

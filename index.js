@@ -18,8 +18,8 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.status(412);
-  res.send("No permission to view this");
+  res.status(200);
+  res.send("Swotle Backend API");
 });
 
 app.get("/server_status", (req, res) => {

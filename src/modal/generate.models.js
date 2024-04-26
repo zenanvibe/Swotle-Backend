@@ -122,96 +122,27 @@ const TraitModel = {
       });
     });
   },
-  // postTraitAnalysis: (reportId, selectedTraits) => {
-  //   return new Promise((resolve, reject) => {
-  //     // First, insert the selected traits
-  //     const insertValues = selectedTraits.map((traitId) => [reportId, traitId]);
-  //     const insertSql =
-  //       "INSERT INTO trait_analysis (report_id, trait_id) VALUES ?";
-
-  //     db.query(insertSql, [insertValues], (insertErr, insertResults) => {
-  //       if (insertErr) {
-  //         console.error("Error inserting Trait Analysis:", insertErr);
-  //         reject(insertErr);
-  //         return;
-  //       }
-
-  //       // If insertion is successful, then fetch trait details
-  //       const selectTraitsSql = `
-  //               SELECT t.name AS trait, d.description, t.classification AS trait_classification
-  //               FROM trait t
-  //               LEFT JOIN description d ON t.id = d.trait_id
-  //               WHERE t.id IN (?)
-  //           `;
-
-  //       db.query(
-  //         selectTraitsSql,
-  //         [selectedTraits],
-  //         (selectErr, selectResults) => {
-  //           if (selectErr) {
-  //             console.error(
-  //               "Error selecting Trait Analysis details:",
-  //               selectErr
-  //             );
-  //             reject(selectErr);
-  //             return;
-  //           }
-
-  //           // Fetch analysis report data
-  //           const selectReportSql = `
-  //               SELECT * FROM analysis_report WHERE id = ?
-  //           `;
-  //           db.query(
-  //             selectReportSql,
-  //             [reportId],
-  //             (reportErr, reportResults) => {
-  //               if (reportErr) {
-  //                 console.error(
-  //                   "Error selecting Analysis Report details:",
-  //                   reportErr
-  //                 );
-  //                 reject(reportErr);
-  //                 return;
-  //               }
-
-  //               // Resolve with both trait details and analysis report data
-  //               resolve({
-  //                 traitResults: selectResults,
-  //                 reportData: reportResults,
-  //               });
-  //             }
-  //           );
-  //         }
-  //       );
-  //     });
-  //   });
-  // },
   postTraitAnalysis: (reportId, selectedTraits) => {
     return new Promise((resolve, reject) => {
-      // Fetch analysis report data
-      const selectReportSql = `
-            SELECT thinking_pattern,energy,emotional,goal FROM analysis_report WHERE report_id = ?
-        `;
-      db.query(selectReportSql, [reportId], (reportErr, reportResults) => {
-        if (reportErr) {
-          console.error("Error selecting Analysis Report details:", reportErr);
-          reject(reportErr);
+      // First, insert the selected traits
+      const insertValues = selectedTraits.map((traitId) => [reportId, traitId]);
+      const insertSql =
+        "INSERT INTO trait_analysis (report_id, trait_id) VALUES ?";
+
+      db.query(insertSql, [insertValues], (insertErr, insertResults) => {
+        if (insertErr) {
+          console.error("Error inserting Trait Analysis:", insertErr);
+          reject(insertErr);
           return;
         }
 
-        // Check if reportResults is empty or not
-        if (reportResults.length === 0) {
-          reject("No analysis report found for the provided reportId.");
-          return;
-        }
-
-        // Now proceed with fetching trait details
+        // If insertion is successful, then fetch trait details
         const selectTraitsSql = `
-                    SELECT t.name AS trait, d.description, t.classification AS trait_classification
-                    FROM trait t
-                    LEFT JOIN description d ON t.id = d.trait_id
-                    WHERE t.id IN (?)
-                `;
+                SELECT t.name AS trait, d.description, t.classification AS trait_classification
+                FROM trait t
+                LEFT JOIN description d ON t.id = d.trait_id
+                WHERE t.id IN (?)
+            `;
 
         db.query(
           selectTraitsSql,
@@ -226,16 +157,150 @@ const TraitModel = {
               return;
             }
 
+            // Fetch analysis report data
+            const selectReportSql = `
+            SELECT thinking_pattern, energy_lev, emotional_lev, goal_lev
+            FROM analysis_report
+            WHERE report_id = ?
+          `;
+            db.query(
+              selectReportSql,
+              [reportId],
+              (reportErr, reportResults) => {
+                if (reportErr) {
+                  console.error(
+                    "Error selecting Analysis Report details:",
+                    reportErr
+                  );
+                  reject(reportErr);
+                  return;
+                }
+
+                // Check if reportResults is empty or not
+                if (reportResults.length === 0) {
+                  reject("No analysis report found for the provided reportId.");
+                  return;
+                }
+
+                // Get the values from the reportResults
+                const {
+                  thinking_pattern,
+                  energy_lev,
+                  emotional_lev,
+                  goal_lev,
+                } = reportResults[0];
+
+                // Initialize an array to hold all the results
+                const allResults = [];
+
+                // Fetch descriptions for thinking patterns
+                const select_tp_DescriptionSql = `
+              SELECT thinking_pattern_name, description
+              FROM thinking_pattern
+              WHERE thinking_pattern_name = ?
+            `;
+                db.query(
+                  select_tp_DescriptionSql,
+                  [thinking_pattern],
+                  (descriptionErr, descriptionResults) => {
+                    if (descriptionErr) {
+                      console.error(
+                        "Error selecting descriptions:",
+                        descriptionErr
+                      );
+                      reject(descriptionErr);
+                      return;
+                    }
+
+                    // Check if descriptionResults is empty
+                    if (descriptionResults.length === 0) {
+                      reject(
+                        "No descriptions found for the provided thinking pattern."
+                      );
+                      return;
+                    }
+
+                    allResults.push({
+                      thinkingPatternDescription: descriptionResults[0],
+                    });
+
+                    const select_tpt_DescriptionSql = `
+                  SELECT thinking_pattern_type_name, ?? AS value
+                  FROM thinking_pattern_type
+                  WHERE thinking_pattern_type_name = ? 
+                  UNION ALL
+                  SELECT thinking_pattern_type_name, ?? AS value
+                  FROM thinking_pattern_type
+                  WHERE thinking_pattern_type_name = ? 
+                  UNION ALL
+                  SELECT thinking_pattern_type_name, ?? AS value
+                  FROM thinking_pattern_type
+                  WHERE thinking_pattern_type_name = ? 
+                `;
+
+                    const select_tpt_DescriptionValues = [
+                      energy_lev,
+                      "Energy",
+                      emotional_lev,
+                      "Emotional",
+                      goal_lev,
+                      "Goals",
+                    ];
+
+                    db.query(
+                      select_tpt_DescriptionSql,
+                      select_tpt_DescriptionValues,
+                      (descriptiontptErr, descriptiontptResults) => {
+                        if (descriptiontptErr) {
+                          console.error(
+                            "Error selecting thinking pattern type descriptions:",
+                            descriptiontptErr
+                          );
+                          reject(descriptiontptErr);
+                          return;
+                        }
+
+                        // Check if descriptiontptResults is empty
+                        if (descriptiontptResults.length === 0) {
+                          reject(
+                            "No descriptions found for the provided thinking pattern types."
+                          );
+                          return;
+                        }
+
+                        // Corrected loop condition
+                        for (let i = 0; i < descriptiontptResults.length; i++) {
+                          let discriptionData = descriptiontptResults[i];
+                          // console.log(discriptionData);
+                          allResults.push({
+                            thinkingPatternTypeDescriptions: discriptionData,
+                          });
+                        }
+                        // console.log(allResults);
+                        // console.log(selectResults);
+                        resolve({
+                          traitResults: selectResults,
+                          reportData: allResults,
+                        });
+                      }
+                    );
+                  }
+                );
+              }
+            );
             // Resolve with both trait details and analysis report data
-            resolve({
-              traitResults: selectResults,
-              reportData: reportResults[0],
-            });
           }
         );
       });
     });
   },
+
+  // postTraitAnalysis: (reportId) => {
+  //   return new Promise((resolve, reject) => {
+  //     // Fetch analysis report data
+
+  //   });
+  // },
 
   postTAnalysisReport: (
     report_id,

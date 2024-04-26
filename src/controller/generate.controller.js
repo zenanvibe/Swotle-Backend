@@ -172,6 +172,40 @@ const TraitController = {
         res.status(500).json({ error: "Error fetching thinking patterns" });
       });
   },
+  // postTraitAnalysis: (req, res) => {
+  //   const { report_id, selectedTraits } = req.body;
+
+  //   console.log(req.body); // Debugging log
+
+  //   TraitModel.postTraitAnalysis(report_id, selectedTraits)
+  //     .then((results) => {
+  //       console.log(results);
+  //       const positiveTraits = [];
+  //       const negativeTraits = [];
+  //       const reportAnalysis = [];
+
+  //       results.traitResults.forEach((row) => {
+  //         if (row.trait_classification === 1 && row.description) {
+  //           positiveTraits.push({
+  //             trait: row.trait,
+  //             description: row.description,
+  //           });
+  //         } else if (row.trait_classification === 0 && row.description) {
+  //           negativeTraits.push({
+  //             trait: row.trait,
+  //             description: row.description,
+  //           });
+  //         }
+  //       });
+  //       reportAnalysis.push(results.reportData);
+
+  //       res.json({ positiveTraits, negativeTraits, reportAnalysis }); // Send JSON response
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error posting Trait Analysis:", error);
+  //       res.status(500).json({ error: "Error posting Trait Analysis" });
+  //     });
+  // },
   postTraitAnalysis: (req, res) => {
     const { report_id, selectedTraits } = req.body;
 
@@ -196,6 +230,7 @@ const TraitController = {
             });
           }
         });
+
         reportAnalysis.push(results.reportData);
 
         res.json({ positiveTraits, negativeTraits, reportAnalysis }); // Send JSON response

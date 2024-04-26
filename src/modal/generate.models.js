@@ -311,7 +311,7 @@ const TraitModel = {
   ) => {
     return new Promise((resolve, reject) => {
       const query =
-        "INSERT INTO analysis_report (report_id, thinking_pattern, energy, emotional, goal) VALUES (?, ?, ?, ?, ?)";
+        "INSERT INTO analysis_report (report_id, thinking_pattern, energy_lev, emotional_lev, goal_lev) VALUES (?, ?, ?, ?, ?)";
       db.query(
         query,
         [report_id, thinking_pattern, energy, emotional, goal],

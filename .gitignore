@@ -144,3 +144,5 @@ dist
 todo.todo
 
 .vscode
+
+docker creds

@@ -3,6 +3,9 @@ const mysql = require("mysql");
 const dotenv = require("dotenv");
 dotenv.config();
 
+
+
+
 //local mysql db connection
 const dbConn = {
   host: process.env.DB_HOST,
@@ -10,11 +13,6 @@ const dbConn = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   port: process.env.DB_PORT || 25060
-  // host: "localhost",
-  // user: "root",
-  // password: "",
-  // database: "mentalhealth",
-  // port: 3306,
 };
 
 const pool = mysql.createPool({

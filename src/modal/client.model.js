@@ -15,7 +15,7 @@ const User = {
 
     return new Promise((resolve, reject) => {
       db.query(query1, values1, (err, result) => {
-        console.log(result);
+        console.log("Client controller" + result);
 
         if (err) reject(err);
 
@@ -25,7 +25,6 @@ const User = {
         const values2 = [result.insertId];
 
         db.query(query2, values2, (err, result) => {
-          // console.log(result);
 
           if (err) reject(err);
           resolve({ userId: result, email, name });

@@ -114,7 +114,7 @@ const TraitController = {
       .then((results) => {
         console.log("Selected Traits:", selectedTraits);
         console.log("Number of Results:", results.length);
-        console.log(results);
+        console.log("generate controller" + results);
         const positiveTraits = [];
         const negativeTraits = [];
 
@@ -209,7 +209,7 @@ const TraitController = {
   postTraitAnalysis: (req, res) => {
     const { report_id, selectedTraits } = req.body;
 
-    console.log(req.body); // Debugging log
+    console.log("generate controller" + req.body); // Debugging log
 
     TraitModel.postTraitAnalysis(report_id, selectedTraits)
       .then((results) => {
@@ -242,7 +242,7 @@ const TraitController = {
   },
   postTAnalysisReport: (req, res) => {
     const { report_id, thinking_pattern, energy, emotional, goal } = req.body; // Assuming these fields match your JSON
-    console.log(req.body)
+    console.log("generate controller" + req.body)
     TraitModel.postTAnalysisReport(
       report_id,
       thinking_pattern,

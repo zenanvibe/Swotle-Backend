@@ -14,8 +14,20 @@ const port = 5000 || 3306;
 app.use(bodyParser.urlencoded({ extended: true }));
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
-// define a root route
-app.use(cors());
+// define a root route\
+
+
+const options = [
+  cors({
+    origin: '*',
+    methods: '*',
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+];
+
+
+app.use(options);
 
 app.get("/", (req, res) => {
   res.status(200);

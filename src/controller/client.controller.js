@@ -4,7 +4,7 @@ const userController = {
   signup: async (req, res) => {
     const { name, email, phone } = req.body;
 
-    console.log("client controller" + req.body);
+    console.log("client controller " + req.body);
     try {
       //   Check if the user already exists
       // const userExists = await clientModel.checkUserExists(email, phone);
@@ -26,7 +26,7 @@ const userController = {
       } = await clientModel.createUser(name, email, phone, password);
 
       // Generate JWT token
-      console.log("client controller" + createdEmail);
+      console.log("client controller " + createdEmail);
 
       const token = clientModel.generateJWT(userId, createdEmail, createdName);
 
@@ -140,7 +140,7 @@ const userController = {
 
   getUserInfo: async (req, res) => {
     const userId = req.params.userId;
-    console.log("client controller" + userId); // Assuming you have the user ID in the request parameters
+    console.log("client controller " + userId); // Assuming you have the user ID in the request parameters
     try {
       const userinfo = await clientModel.getUserInfo(userId);
       res.status(200).json(userinfo);
@@ -153,7 +153,7 @@ const userController = {
 
   deleteUser: async (req, res) => {
     const userId = req.params.userId;
-    console.log("client controller" + userId); // Assuming you have the user ID in the request parameters
+    console.log("client controller " + userId); // Assuming you have the user ID in the request parameters
     try {
       const userinfo = await clientModel.deleteUser(userId);
       res.status(200).json({ message: "User deleted successfully" });

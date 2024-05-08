@@ -209,7 +209,7 @@ const TraitController = {
   postTraitAnalysis: (req, res) => {
     const { report_id, selectedTraits } = req.body;
 
-    console.log("generate controller" + req.body); // Debugging log
+    console.log("generate controller " + req.body); // Debugging log
 
     TraitModel.postTraitAnalysis(report_id, selectedTraits)
       .then((results) => {
@@ -242,7 +242,7 @@ const TraitController = {
   },
   postTAnalysisReport: (req, res) => {
     const { report_id, thinking_pattern, energy, emotional, goal } = req.body; // Assuming these fields match your JSON
-    console.log("generate controller" + req.body)
+    console.log("generate controller " + req.body)
     TraitModel.postTAnalysisReport(
       report_id,
       thinking_pattern,

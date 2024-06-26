@@ -8,7 +8,7 @@ dotenv.config();
 
 const app = express();
 
-const port = 5000 || 3306;
+const port = 5000 || 5000;
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));

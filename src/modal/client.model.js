@@ -25,7 +25,6 @@ const User = {
         const values2 = [result.insertId];
 
         db.query(query2, values2, (err, result) => {
-
           if (err) reject(err);
           resolve({ userId: result, email, name });
         });

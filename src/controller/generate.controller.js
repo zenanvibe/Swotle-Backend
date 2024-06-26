@@ -209,7 +209,9 @@ const TraitController = {
   postTraitAnalysis: (req, res) => {
     const { report_id, selectedTraits } = req.body;
 
-    console.log("generate controller " + req.body); // Debugging log
+    console.log("Post Trait Analysis" + "\n"); // Debugging log
+    console.log(req.body.report_id);
+    console.log(req.body.selectedTraits);
 
     TraitModel.postTraitAnalysis(report_id, selectedTraits)
       .then((results) => {
@@ -234,6 +236,9 @@ const TraitController = {
         reportAnalysis.push(results.reportData);
 
         res.json({ positiveTraits, negativeTraits, reportAnalysis }); // Send JSON response
+        console.log(positiveTraits);
+        console.log(negativeTraits);
+        console.log(reportAnalysis);
       })
       .catch((error) => {
         console.error("Error posting Trait Analysis:", error);
@@ -242,7 +247,13 @@ const TraitController = {
   },
   postTAnalysisReport: (req, res) => {
     const { report_id, thinking_pattern, energy, emotional, goal } = req.body; // Assuming these fields match your JSON
-    console.log("generate controller " + req.body)
+    console.log("Post Analysis Api Call Body Valye " + "\n");
+    console.log(req.body.report_id);
+    console.log(req.body.thinking_pattern);
+    console.log(req.body.energy);
+    console.log(req.body.emotional);
+    console.log(req.body.goal);
+
     TraitModel.postTAnalysisReport(
       report_id,
       thinking_pattern,

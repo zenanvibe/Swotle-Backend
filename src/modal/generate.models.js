@@ -122,10 +122,13 @@ const TraitModel = {
       });
     });
   },
+  
   postTraitAnalysis: (reportId, selectedTraits) => {
     return new Promise((resolve, reject) => {
       // First, insert the selected traits
       const insertValues = selectedTraits.map((traitId) => [reportId, traitId]);
+      console.log(insertValues);
+      console.log('\n');
       const insertSql =
         "INSERT INTO trait_analysis (report_id, trait_id) VALUES ?";
 

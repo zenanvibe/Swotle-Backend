@@ -2,7 +2,7 @@ const clientModel = require("../modal/client.model");
 
 const userController = {
   signup: async (req, res) => {
-    const { name, email, phone } = req.body;
+    const { name, email, phone,requestname } = req.body;
 
     console.log("client controller " + req.body);
     try {
@@ -23,7 +23,7 @@ const userController = {
         userId,
         email: createdEmail,
         name: createdName,
-      } = await clientModel.createUser(name, email, phone, password);
+      } = await clientModel.createUser(name, email, phone, password,requestname);
 
       // Generate JWT token
       console.log("client controller " + createdEmail);

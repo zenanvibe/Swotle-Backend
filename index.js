@@ -51,10 +51,30 @@ const generateRoutes = require("./src/routes/generate.routes");
 const authuserRoutes = require("./src/routes/user.routes");
 const authclientRoutes = require("./src/routes/client.routes");
 
-// using as middleware
+const authenticationRoutes = require("./src/auth/auth.routes");
+const traitRoutes = require("./src/traits/traits.routes");
+const companyRoutes = require("./src/company/company.routes");
+
+
+
+// Version 1 middleware
 app.use("/api/v1/generate", generateRoutes);
 app.use("/api/v1/users", authuserRoutes);
 app.use("/api/v1/client", authclientRoutes);
+
+
+// version 2 middleware
+
+app.use("/api/v2/auth", authenticationRoutes);
+app.use("/api/v2/trait", traitRoutes);
+app.use("/api/v2/company", companyRoutes);
+
+
+
+
+
+
+
 
 // listen for requests
 app.listen(port, () => {

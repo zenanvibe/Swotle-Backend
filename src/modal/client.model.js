@@ -4,14 +4,14 @@ const jwt = require("jsonwebtoken");
 const db = require("../../config/db.config");
 
 const User = {
-  createUser: async (name, email, phone, password) => {
+  createUser: async (name, email, phone, password,requestname) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const status = 1; // or set to your desired default status
     console.log(name);
     const role = 1;
     const query1 =
-      "INSERT INTO clients (name, email, phone, password, status, role) VALUES (?, ?, ?, ?, ?, ?)";
-    const values1 = [name, email, phone, hashedPassword, status, role];
+      "INSERT INTO clients (name, email, phone, password, status, role, requestname) VALUES (?, ?, ?, ?, ?, ?,?)";
+    const values1 = [name, email, phone, hashedPassword, status, role,requestname];
 
     return new Promise((resolve, reject) => {
       db.query(query1, values1, (err, result) => {

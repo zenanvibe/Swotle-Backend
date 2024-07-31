@@ -2,6 +2,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../../config/db.config");
+const { getAllStaffs } = require("./company.controller");
 
 const Auth = {
     createUser: async (name, email, phone, password) => {
@@ -34,6 +35,30 @@ const Auth = {
             });
         });
     },
+
+    getAllCompanies: async () => {
+        const query = `
+SELECT 
+    c.company_name,
+    COUNT(u.id) AS total_users
+FROM 
+    company c
+LEFT JOIN 
+    users u ON c.id = u.company_id
+GROUP BY 
+    c.company_name `;
+        return new Promise((resolve, reject) => {
+            db.query(query, (err, result) => {
+                if (err) reject(err);
+                resolve(result);
+            });
+        });
+    },
+
+    getAllStaffs : async () => {
+        
+    },
+
 
     checkUserExists: (email, phone) => {
         const query = "SELECT id FROM users WHERE email = ? OR phone = ?";

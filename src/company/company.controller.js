@@ -60,6 +60,23 @@ const userController = {
         }
     },
 
+    getAllCompanies: async (req, res) => {
+        try {
+            const companies = await companyModel.getAllCompanies();
+            res.status(200).json(companies);
+        } catch (error) {
+            logger.error(error);
+        }
+    },
+
+    getAllStaffs: async (req, res) => {
+        try {
+            const companies = await companyModel.getAllStaffs();
+            res.status(200).json(companies);
+        } catch (error) {
+            logger.error(error);
+        }
+    },
 
 
 

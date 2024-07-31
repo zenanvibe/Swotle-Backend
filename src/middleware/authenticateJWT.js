@@ -4,6 +4,7 @@ dotenv.config();
 
 function authenticateJWT(req, res, next) {
     const token = req.header("Authorization");
+    console.log("Audit " + token);
 
     if (!token) {
         return res

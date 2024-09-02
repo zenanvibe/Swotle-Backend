@@ -4,14 +4,23 @@ const jwt = require("jsonwebtoken");
 const db = require("../../config/db.config");
 
 const Auth = {
-  createUser: async (name, email, phone, password) => {
+  createUser: async (name, email, phone, password, company_id) => {
+    console.log(name, email, phone, password);
     const hashedPassword = await bcrypt.hash(password, 10);
     const status = "active"; // or set to your desired default status
-    const role = "user";
+    const role = "admin";
 
     const query =
-      "INSERT INTO users (name, email, phone, password, status, role) VALUES (?, ?, ?, ?, ?, ?)";
-    const values = [name, email, phone, hashedPassword, status, role];
+      "INSERT INTO users (name, email, phone, password, status, role,company_id) VALUES (?, ?, ?, ?, ?, ?,?)";
+    const values = [
+      name,
+      email,
+      phone,
+      hashedPassword,
+      status,
+      role,
+      company_id,
+    ];
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {
         if (err) reject(err);
@@ -23,7 +32,7 @@ const Auth = {
 
   loginUser: async (email, password, roles) => {
     const query =
-      "SELECT id,name,password,status,phone,role FROM users WHERE email = ? AND role = ? AND deleted_at IS NULL";
+      "SELECT id,name,password,status,phone,role FROM users WHERE email = ? AND role = ?";
     const values = [email, roles];
 
     return new Promise((resolve, reject) => {
@@ -60,7 +69,8 @@ const Auth = {
   },
 
   checkUserVerified: (email) => {
-    const query = "SELECT id FROM users WHERE email_verification = 1 and email = ?";
+    const query =
+      "SELECT id FROM users WHERE email_verification = 1 and email = ?";
     const values = [email];
 
     return new Promise((resolve, reject) => {

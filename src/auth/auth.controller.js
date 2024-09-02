@@ -5,7 +5,9 @@ const mailAuthenticator = require("../middleware/mailAuthenticator");
 
 const userController = {
   signup: async (req, res) => {
-    const { name, email, phone, password } = req.body;
+    const { name, email, phone, password, company_id } = req.body;
+
+    console.log(req.body);
 
     try {
       // Check if the user already exists
@@ -24,7 +26,7 @@ const userController = {
         userId,
         email: createdEmail,
         name: createdName,
-      } = await authModel.createUser(name, email, phone, password);
+      } = await authModel.createUser(name, email, phone, password,company_id);
 
       // Generate JWT token
       const role = "user";
@@ -38,6 +40,7 @@ const userController = {
       logger.info(`User signed up successfully. User ID: ${userId}`);
       res.status(201).json({ userId, token });
     } catch (error) {
+      console.log(error);
       logger.error(`Error signing up user: ${error.message}`);
       res.status(500).json({ message: "Internal Server Error" });
     }
@@ -49,13 +52,11 @@ const userController = {
       // Check if the user exists
       const user = await authModel.loginUser(email, password, roles);
       if (!user) {
-        return res
-          .status(401)
-          .json({
-            success: false,
-            status: 401,
-            message: "Please Check you Email, Password and Roles"
-          });
+        return res.status(401).json({
+          success: false,
+          status: 401,
+          message: "Please Check you Email, Password and Roles",
+        });
       }
       // Generate JWT token
       const token = authModel.generateJWT(

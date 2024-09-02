@@ -55,9 +55,39 @@ GROUP BY
         });
     },
 
-    getAllStaffs : async () => {
-        
+    getAllStaffs: async (company_id) => {
+        const query = `
+        SELECT 
+            u.id AS user_id,
+            u.name,
+            u.email,
+            u.phone,
+            u.role,
+            u.status,
+            u.gender,
+            u.dob,
+            u.handwritting_url,
+            IF(r.id IS NOT NULL, 'true', 'false') AS report_generated
+        FROM 
+            users u
+        LEFT JOIN 
+            report r ON u.id = r.client_id
+        WHERE 
+            u.company_id = ?
+        ORDER BY
+            u.id LIMIT 100`;
+
+        return new Promise((resolve, reject) => {
+            db.query(query, [company_id], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
     },
+
 
 
     checkUserExists: (email, phone) => {

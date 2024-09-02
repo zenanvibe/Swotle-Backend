@@ -70,8 +70,9 @@ const userController = {
     },
 
     getAllStaffs: async (req, res) => {
+        const { companyId } = req.params;
         try {
-            const companies = await companyModel.getAllStaffs();
+            const companies = await companyModel.getAllStaffs(companyId);
             res.status(200).json(companies);
         } catch (error) {
             logger.error(error);

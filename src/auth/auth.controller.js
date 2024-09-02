@@ -5,28 +5,29 @@ const mailAuthenticator = require("../middleware/mailAuthenticator");
 
 const userController = {
   signup: async (req, res) => {
-    const { name, email, phone, password, company_id } = req.body;
-
-    console.log(req.body);
+    const { name, email, phone, password, company_name } = req.body;
 
     try {
       // Check if the user already exists
       const userExists = await authModel.checkUserExists(email, phone);
       if (userExists) {
         logger.warn(
-          `User with the same email or phone already exists.${email},${phone}`
+          `User with the same email or phone already exists. ${email}, ${phone}`
         );
         return res.status(400).json({
           message: "User with the same email or phone already exists.",
         });
       }
 
+      // Check if the company exists or create a new one
+      const company_id = await authModel.findOrCreateCompany(company_name);
+
       // Create a new user
       const {
         userId,
         email: createdEmail,
         name: createdName,
-      } = await authModel.createUser(name, email, phone, password,company_id);
+      } = await authModel.createUser(name, email, phone, password, company_id);
 
       // Generate JWT token
       const role = "user";

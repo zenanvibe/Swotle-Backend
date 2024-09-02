@@ -11,7 +11,7 @@ const Auth = {
     const role = "admin";
 
     const query =
-      "INSERT INTO users (name, email, phone, password, status, role,company_id) VALUES (?, ?, ?, ?, ?, ?,?)";
+      "INSERT INTO users (name, email, phone, password, status, role, company_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
     const values = [
       name,
       email,
@@ -21,6 +21,7 @@ const Auth = {
       role,
       company_id,
     ];
+
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {
         if (err) reject(err);
@@ -48,6 +49,40 @@ const Auth = {
           } else {
             resolve(null); // Incorrect password
           }
+        }
+      });
+    });
+  },
+
+  findOrCreateCompany: async (company_name) => {
+    return new Promise((resolve, reject) => {
+      // Check if the company already exists
+      const checkCompanyQuery = "SELECT id FROM company WHERE company_name = ?";
+      db.query(checkCompanyQuery, [company_name], (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+
+        if (result.length > 0) {
+          // Company exists, return the company ID
+          return resolve(result[0].id);
+        } else {
+          // Company doesn't exist, create a new one
+          const newCompanyId = `AD${Math.floor(
+            100000 + Math.random() * 900000
+          )}`;
+          const insertCompanyQuery =
+            "INSERT INTO company (company_id, company_name) VALUES (?, ?)";
+          db.query(
+            insertCompanyQuery,
+            [newCompanyId, company_name],
+            (err, result) => {
+              if (err) {
+                return reject(err);
+              }
+              resolve(result.insertId); // Return the new company ID
+            }
+          );
         }
       });
     });

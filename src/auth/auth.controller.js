@@ -39,7 +39,7 @@ const userController = {
       );
 
       logger.info(`User signed up successfully. User ID: ${userId}`);
-      res.status(201).json({ userId, token });
+      res.status(201).json({ userId, token, company_id });
     } catch (error) {
       console.log(error);
       logger.error(`Error signing up user: ${error.message}`);
@@ -67,7 +67,9 @@ const userController = {
         user.role
       );
       logger.info(`User logged in successfully. User ID: ${user.id}`);
-      res.status(200).json({ userId: user.id, token, roles });
+      res
+        .status(200)
+        .json({ userId: user.id, token, roles, company_id: user.company_id });
     } catch (error) {
       logger.error(`Error logging in user: ${error.message}`);
       res.status(500).json({ message: "Internal Server Error" });

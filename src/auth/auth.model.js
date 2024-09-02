@@ -26,7 +26,7 @@ const Auth = {
       db.query(query, values, (err, result) => {
         if (err) reject(err);
         console.log(result);
-        resolve({ userId: result.insertId, email, name });
+        resolve({ userId: result.insertId, email, name, company_id });
       });
     });
   },

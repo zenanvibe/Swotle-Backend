@@ -33,7 +33,7 @@ const Auth = {
 
   loginUser: async (email, password, roles) => {
     const query =
-      "SELECT id,name,password,status,phone,role FROM users WHERE email = ? AND role = ?";
+      "SELECT id,name,password,status,phone,role,company_id FROM users WHERE email = ? AND role = ?";
     const values = [email, roles];
 
     return new Promise((resolve, reject) => {

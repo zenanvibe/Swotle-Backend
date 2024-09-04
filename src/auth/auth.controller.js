@@ -52,6 +52,7 @@ const userController = {
     try {
       // Check if the user exists
       const user = await authModel.loginUser(email, password, roles);
+      console.log(user);
       if (!user) {
         return res.status(401).json({
           success: false,

@@ -54,6 +54,7 @@ const authclientRoutes = require("./src/routes/client.routes");
 const authenticationRoutes = require("./src/auth/auth.routes");
 const traitRoutes = require("./src/traits/traits.routes");
 const companyRoutes = require("./src/company/company.routes");
+const commentRoutes = require("./src/comment/comment.router");
 
 
 
@@ -68,6 +69,7 @@ app.use("/api/v1/client", authclientRoutes);
 app.use("/api/v2/auth", authenticationRoutes);
 app.use("/api/v2/trait", traitRoutes);
 app.use("/api/v2/company", companyRoutes);
+app.use("/api/v2/comments",commentRoutes);
 
 
 

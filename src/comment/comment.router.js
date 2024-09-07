@@ -7,6 +7,7 @@ const authenticateJwt = require("../middleware/authenticateJWT");
 router.post("/add",authenticateJwt, CommentController.addComment);
 
 // GET route to retrieve all comments
-router.get("/getallcmt", authenticateJwt,CommentController.getComments);
+router.get("/getcomments/:userId",authenticateJwt,CommentController.getCommentsByUser)
+router.get("/getcomments",authenticateJwt,CommentController.getComments);
 
 module.exports = router;

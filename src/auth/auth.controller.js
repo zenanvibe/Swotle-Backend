@@ -55,6 +55,7 @@ const userController = {
   },
   employeeSignup: async (req, res) => {
     const { name, email, phone, company_id, gender, dateofbirth } = req.body;
+    console.log(req.body);
 
     try {
       // Check if the user already exists

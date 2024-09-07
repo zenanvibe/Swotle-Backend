@@ -55,7 +55,7 @@ GROUP BY
   },
 
   getAllStaffs: async (company_id) => {
-    const query = `SELECT id AS user_id, name, email, phone, role, status, gender, dob, handwritting_url FROM users WHERE company_id = ?`;
+    const query = `SELECT id AS user_id, name, email, phone, role, status, gender, dob, handwritting_url, report_status FROM users WHERE company_id = ?  WHERE role = 'user'`;
 
     return new Promise((resolve, reject) => {
       db.query(query, [company_id], (err, result) => {

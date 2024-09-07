@@ -53,13 +53,61 @@ const userController = {
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
+  employeeSignup: async (req, res) => {
+    const { name, email, phone, company_id, gender, dateofbirth } = req.body;
+
+    try {
+      // Check if the user already exists
+      const userExists = await authModel.checkUserExists(email, phone);
+      if (userExists) {
+        logger.warn(
+          `User with the same email or phone already exists. ${email}, ${phone}`
+        );
+        return res.status(400).json({
+          message: "User with the same email or phone already exists.",
+        });
+      }
+
+      const password = phone;
+
+      // Create a new user
+      const {
+        userId,
+        email: createdEmail,
+        name: createdName,
+      } = await authModel.createUser(
+        name,
+        email,
+        phone,
+        password,
+        gender,
+        company_id,
+        dateofbirth
+      );
+
+      // Generate JWT token
+      const role = "user";
+      const token = authModel.generateJWT(
+        userId,
+        createdEmail,
+        createdName,
+        role
+      );
+
+      logger.info(`User signed up successfully. User ID: ${userId}`);
+      res.status(201).json({ userId, token, company_id });
+    } catch (error) {
+      console.log(error);
+      logger.error(`Error signing up user: ${error.message}`);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
 
   login: async (req, res) => {
     const { email, password, roles } = req.body;
     try {
       // Check if the user exists
       const user = await authModel.loginUser(email, password, roles);
-      console.log(user);
       if (!user) {
         return res.status(401).json({
           success: false,

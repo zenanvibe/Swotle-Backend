@@ -2,6 +2,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../../config/db.config");
+const { employeeSignup } = require("./auth.controller");
 
 const Auth = {
   createUser: async (name, email, phone, password, gender, company_id) => {
@@ -20,6 +21,42 @@ const Auth = {
       role,
       company_id,
       gender,
+    ];
+
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) reject(err);
+        console.log(result);
+        resolve({ userId: result.insertId, email, name, company_id });
+      });
+    });
+  },
+
+  employeeSignup: async (
+    name,
+    email,
+    phone,
+    password,
+    gender,
+    company_id,
+    dateofbirth
+  ) => {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const status = "active"; // or set to your desired default status
+    const role = "employee";
+
+    const query =
+      "INSERT INTO users (name, email, phone, password, status, role, company_id,gender,dob) VALUES (?, ?, ?, ?, ?, ?, ?,?,?)";
+    const values = [
+      name,
+      email,
+      phone,
+      hashedPassword,
+      status,
+      role,
+      company_id,
+      gender,
+      dateofbirth,
     ];
 
     return new Promise((resolve, reject) => {

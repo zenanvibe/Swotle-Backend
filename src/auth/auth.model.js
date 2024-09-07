@@ -59,12 +59,13 @@ const Auth = {
       dateofbirth,
     ];
 
+    console.log(values)
+
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {
-        console.log(result);
         if (err) reject(err);
         console.log(result);
-        resolve({ userId: result.insertId, email, name, company_id });
+        resolve({ userId: result, email, name, company_id });
       });
     });
   },

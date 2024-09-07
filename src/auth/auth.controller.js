@@ -5,7 +5,7 @@ const mailAuthenticator = require("../middleware/mailAuthenticator");
 
 const userController = {
   signup: async (req, res) => {
-    const { name, email, phone, password, company_name } = req.body;
+    const { name, email, phone, password, company_name, gender } = req.body;
 
     try {
       // Check if the user already exists
@@ -27,7 +27,14 @@ const userController = {
         userId,
         email: createdEmail,
         name: createdName,
-      } = await authModel.createUser(name, email, phone, password, company_id);
+      } = await authModel.createUser(
+        name,
+        email,
+        phone,
+        password,
+        gender,
+        company_id
+      );
 
       // Generate JWT token
       const role = "user";

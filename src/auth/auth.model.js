@@ -4,14 +4,13 @@ const jwt = require("jsonwebtoken");
 const db = require("../../config/db.config");
 
 const Auth = {
-  createUser: async (name, email, phone, password, company_id) => {
-    console.log(name, email, phone, password);
+  createUser: async (name, email, phone, password, gender, company_id) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const status = "active"; // or set to your desired default status
-    const role = "admin";
+    const role = "company";
 
     const query =
-      "INSERT INTO users (name, email, phone, password, status, role, company_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+      "INSERT INTO users (name, email, phone, password, status, role, company_id,gender) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
     const values = [
       name,
       email,
@@ -20,6 +19,7 @@ const Auth = {
       status,
       role,
       company_id,
+      gender,
     ];
 
     return new Promise((resolve, reject) => {
@@ -32,8 +32,7 @@ const Auth = {
   },
 
   loginUser: async (email, password, roles) => {
-    const query =
-      "SELECT id,name,password,status,phone,role,company_id FROM users WHERE email = ? AND role = ?";
+    const query = "SELECT * FROM users WHERE email = ? AND role = ?";
     const values = [email, roles];
 
     return new Promise((resolve, reject) => {

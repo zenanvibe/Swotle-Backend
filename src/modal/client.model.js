@@ -7,7 +7,6 @@ const User = {
   createUser: async (name, email, phone, password,requestname) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const status = 1; // or set to your desired default status
-    console.log(name);
     const role = 1;
     const query1 =
       "INSERT INTO clients (name, email, phone, password, status, role, requestname) VALUES (?, ?, ?, ?, ?, ?,?)";
@@ -15,7 +14,6 @@ const User = {
 
     return new Promise((resolve, reject) => {
       db.query(query1, values1, (err, result) => {
-        console.log("Client controller" + result);
 
         if (err) reject(err);
 

@@ -13,7 +13,6 @@ const TraitModel = {
       }
 
       const query = `SELECT t.name AS trait, d.description, t.classification AS trait_classification FROM trait t LEFT JOIN description d ON t.id = d.trait_id ${whereClause}`;
-      console.log(query);
       db.query(query, (err, results) => {
         if (err) {
           reject(err);
@@ -127,8 +126,6 @@ const TraitModel = {
     return new Promise((resolve, reject) => {
       // First, insert the selected traits
       const insertValues = selectedTraits.map((traitId) => [reportId, traitId]);
-      console.log(insertValues);
-      console.log('\n');
       const insertSql =
         "INSERT INTO trait_analysis (report_id, trait_id) VALUES ?";
 

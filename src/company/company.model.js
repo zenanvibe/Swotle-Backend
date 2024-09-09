@@ -16,7 +16,6 @@ const Auth = {
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {
         if (err) reject(err);
-        console.log(result);
         resolve({ userId: result.insertId, email, name });
       });
     });
@@ -29,7 +28,6 @@ const Auth = {
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {
         if (err) reject(err);
-        console.log(result);
         resolve({ companyid: result.insertId });
       });
     });
@@ -89,8 +87,6 @@ FROM company c
 LEFT JOIN users u ON c.company_id = u.company_id
 WHERE c.company_id = ?
 GROUP BY c.company_name;
-
-
 `;
     return new Promise((resolve, reject) => {
       db.query(query, [company_id], (err, result) => {

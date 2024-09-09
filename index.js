@@ -16,16 +16,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // define a root route\
 
-
 const options = [
   cors({
-    origin: '*',
-    methods: '*',
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: "*",
+    methods: "*",
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
-  })
+  }),
 ];
-
 
 app.use(options);
 
@@ -50,33 +48,24 @@ app.get("/dbcheck", (req, res) => {
 const generateRoutes = require("./src/routes/generate.routes");
 const authuserRoutes = require("./src/routes/user.routes");
 const authclientRoutes = require("./src/routes/client.routes");
-
+const userRoutes = require("./src/users/users.routes");
 const authenticationRoutes = require("./src/auth/auth.routes");
 const traitRoutes = require("./src/traits/traits.routes");
 const companyRoutes = require("./src/company/company.routes");
 const commentRoutes = require("./src/comment/comment.router");
-
-
 
 // Version 1 middleware
 app.use("/api/v1/generate", generateRoutes);
 app.use("/api/v1/users", authuserRoutes);
 app.use("/api/v1/client", authclientRoutes);
 
-
 // version 2 middleware
 
 app.use("/api/v2/auth", authenticationRoutes);
 app.use("/api/v2/trait", traitRoutes);
 app.use("/api/v2/company", companyRoutes);
-app.use("/api/v2/comments",commentRoutes);
-
-
-
-
-
-
-
+app.use("/api/v2/comments", commentRoutes);
+app.use("/api/v2/users", userRoutes);
 
 // listen for requests
 app.listen(port, () => {

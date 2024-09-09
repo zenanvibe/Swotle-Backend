@@ -5,6 +5,6 @@ const authenticateJwt = require("../middleware/authenticateJWT");
 
 const router = express.Router();
 
-router.get('/', authenticateJwt, userController.getUserInfo);
+router.get('/:userId', authenticateJwt, userController.getUserInfo);
 
 module.exports = router;

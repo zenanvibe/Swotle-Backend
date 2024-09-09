@@ -26,7 +26,6 @@ const Auth = {
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {
         if (err) reject(err);
-        console.log(result);
         resolve({ userId: result.insertId, email, name, company_id });
       });
     });
@@ -59,12 +58,9 @@ const Auth = {
       dateofbirth,
     ];
 
-    console.log(values)
-
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {
         if (err) reject(err);
-        console.log(result);
         resolve({ userId: result, email, name, company_id });
       });
     });

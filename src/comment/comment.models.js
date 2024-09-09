@@ -6,7 +6,6 @@ const CommentModel = {
     const query =
       "INSERT INTO comments (comment, user_id, author_id, parent_comment_id) VALUES (?, ?, ?, ?)";
     const values = [comment, userId, authorId, parentCommentId];
-    console.log(values);
 
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {
@@ -34,7 +33,6 @@ const CommentModel = {
     const values = user_id; // Pass as array for parameterized query
 
     // Debugging log to confirm values
-    console.log("User ID:", user_id);
 
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {

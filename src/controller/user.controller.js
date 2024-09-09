@@ -108,7 +108,6 @@ const userController = {
   },
 
   updateUser: async (req, res) => {
-    console.log("User Updated");
     const userId = req.params.userId; // Assuming you have the user ID in the request parameters
     const updatedData = req.body; // Assuming the updated data is sent in the request body
     try {
@@ -135,12 +134,10 @@ const userController = {
 
   getUserInfo: async (req, res) => {
     const userId = req.params.userId;
-    console.log("user controller" + userId); // Assuming you have the user ID in the request parameters
     try {
       const userinfo = await userModel.getUserInfo(userId);
       res.status(200).json(userinfo);
     } catch (error) {
-      console.log("user controller" + error);
       console.log(`Error viewing user: ${error.message}`);
       res.status(500).json({ message: "Internal Server Error" });
     }
@@ -148,12 +145,10 @@ const userController = {
 
   deleteUser: async (req, res) => {
     const userId = req.params.userId;
-    console.log("user controller" + userId); // Assuming you have the user ID in the request parameters
     try {
       const userinfo = await userModel.deleteUser(userId);
       res.status(200).json({ message: "User deleted successfully" });
     } catch (error) {
-      console.log("user controller" + error);
       console.log(`Error viewing user: ${error.message}`);
       res.status(500).json({ message: "Internal Server Error" });
     }

@@ -86,7 +86,7 @@ LEFT JOIN users u ON c.company_id = u.company_id;
     COUNT(u.id) AS 'no_of_employee'
 FROM company c
 LEFT JOIN users u ON c.company_id = u.company_id
-WHERE c.company_id = ?
+WHERE c.id = 9
 GROUP BY c.company_name;
 
 

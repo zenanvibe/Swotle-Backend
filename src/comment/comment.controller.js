@@ -47,7 +47,7 @@ const commentController = {
 
   getCommentsByUser: async (req, res) => {
       const { userId } = req.params;
-      const userIdInt = req.parseInt(userId)
+      const userIdInt = parseInt(userId)
       try {
           const comments = await CommentModel.getComments(userIdInt);
           if (comments.length === 0) {

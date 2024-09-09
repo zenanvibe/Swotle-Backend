@@ -25,18 +25,24 @@ const CommentModel = {
   // Get all comments (and their replies) about a specific user
   getComments: async (user_id) => {
     const query = `
-            SELECT c.*, u.name AS author_name 
-            FROM comments c 
-            JOIN users u ON c.author_id = u.id 
-            WHERE c.user_id = ?
-            ORDER BY c.created_at ASC
-        `;
-    const values = [user_id];
-    console.log(values);
+      SELECT c.*, u.name AS author_name 
+      FROM comments c 
+      JOIN users u ON c.author_id = u.id 
+      WHERE c.user_id = ?
+      ORDER BY c.created_at ASC
+    `;
+    const values = user_id; // Pass as array for parameterized query
+
+    // Debugging log to confirm values
+    console.log("User ID:", user_id);
+
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
+        if (err) {
+          console.error("Database query error:", err); // Log error for debugging
+          return reject(err);
+        }
+        resolve(result); // Return the result on success
       });
     });
   },

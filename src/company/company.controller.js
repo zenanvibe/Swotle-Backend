@@ -93,6 +93,28 @@ const userController = {
     }
   },
 
+  getadminTotalData: async (req, res) => {
+    const { companyId } = req.params;
+    const companyIdInt = parseInt(companyId);
+    try {
+      const companies = await companyModel.getadminTotalData(companyIdInt);
+      res.status(200).json(companies);
+    } catch (error) {
+      logger.error(error);
+    }
+  },
+
+  getadminTableData: async (req, res) => {
+    const { companyId } = req.params;
+    const companyIdInt = parseInt(companyId);
+    try {
+      const companies = await companyModel.getadminTableData(companyIdInt);
+      res.status(200).json(companies);
+    } catch (error) {
+      logger.error(error);
+    }
+  },
+
   verifyEmail: async (req, res) => {
     const { toMail, subject, message } = req.body;
     try {

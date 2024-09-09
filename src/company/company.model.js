@@ -64,6 +64,41 @@ GROUP BY
     });
   },
 
+  getadminTotalData: async (company_id) => {
+    const query = `SELECT 
+    COUNT(DISTINCT c.id) AS 'no_of_companies',
+    COUNT(u.id) AS 'no_of_users'
+FROM company c
+LEFT JOIN users u ON c.company_id = u.company_id;
+
+`;
+    return new Promise((resolve, reject) => {
+      db.query(query, [company_id], (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  },
+
+  getadminTableData: async (company_id) => {
+    const query = ` SELECT 
+    c.company_name AS 'company_name',
+    COUNT(u.id) AS 'no_of_employee'
+FROM company c
+LEFT JOIN users u ON c.company_id = u.company_id
+WHERE c.company_id = ?
+GROUP BY c.company_name;
+
+
+`;
+    return new Promise((resolve, reject) => {
+      db.query(query, [company_id], (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  },
+
   getAllStaffs: async (company_id) => {
     const query = `SELECT id AS user_id, name, email, phone, role, status, gender, dob, handwritting_url, report_status 
     FROM users 

@@ -38,6 +38,7 @@ const Auth = {
   getAllCompanies: async () => {
     const query = `
 SELECT 
+    c.id,
     c.company_name,
     COUNT(u.id) AS total_users
 FROM 
@@ -45,7 +46,7 @@ FROM
 LEFT JOIN 
     users u ON c.id = u.company_id
 GROUP BY 
-    c.company_name `;
+    c.id `;
     return new Promise((resolve, reject) => {
       db.query(query, (err, result) => {
         if (err) reject(err);

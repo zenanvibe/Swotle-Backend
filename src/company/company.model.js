@@ -54,6 +54,16 @@ GROUP BY
     });
   },
 
+  getTotalData: async (company_id) => {
+    const query = `SELECT c.company_name, COUNT(u.id) AS total_users, SUM(CASE WHEN u.report_status = 'pending' THEN 1 ELSE 0 END) AS pending_count, SUM(CASE WHEN u.report_status = 'completed' THEN 1 ELSE 0 END) AS completed_count FROM users u JOIN company c ON u.company_id = c.id WHERE c.id = ? GROUP BY c.company_name`;
+    return new Promise((resolve, reject) => {
+      db.query(query, [company_id], (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  },
+
   getAllStaffs: async (company_id) => {
     const query = `SELECT id AS user_id, name, email, phone, role, status, gender, dob, handwritting_url, report_status 
     FROM users 

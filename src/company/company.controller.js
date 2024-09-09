@@ -82,6 +82,17 @@ const userController = {
     }
   },
 
+  getTotalData: async (req, res) => {
+    const { companyId } = req.params;
+    const companyIdInt = parseInt(companyId);
+    try {
+      const companies = await companyModel.getTotalData(companyIdInt);
+      res.status(200).json(companies);
+    } catch (error) {
+      logger.error(error);
+    }
+  },
+
   verifyEmail: async (req, res) => {
     const { toMail, subject, message } = req.body;
     try {

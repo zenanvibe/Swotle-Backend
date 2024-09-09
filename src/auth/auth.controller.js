@@ -53,6 +53,7 @@ const userController = {
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
+  
   employeeSignup: async (req, res) => {
     const { name, email, phone, company_id, gender, dateofbirth } = req.body;
 

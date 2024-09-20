@@ -106,6 +106,7 @@ const userController = {
 
   login: async (req, res) => {
     const { email, password, roles } = req.body;
+    console.log(req.body)
     try {
       // Check if the user exists
       const user = await authModel.loginUser(email, password, roles);

@@ -53,6 +53,7 @@ const authenticationRoutes = require("./src/auth/auth.routes");
 const traitRoutes = require("./src/traits/traits.routes");
 const companyRoutes = require("./src/company/company.routes");
 const commentRoutes = require("./src/comment/comment.router");
+const cardRoutes = require("./src/card/card.routes");
 
 // Version 1 middleware
 app.use("/api/v1/generate", generateRoutes);
@@ -66,6 +67,7 @@ app.use("/api/v2/trait", traitRoutes);
 app.use("/api/v2/company", companyRoutes);
 app.use("/api/v2/comments", commentRoutes);
 app.use("/api/v2/users", userRoutes);
+app.use("/api/v2/card", cardRoutes);
 
 // listen for requests
 app.listen(port, () => {

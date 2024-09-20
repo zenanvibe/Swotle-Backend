@@ -7,6 +7,6 @@ router.post("/signup", authController.signup);
 router.post("/employee/signup", authController.employeeSignup);
 router.post("/login", authController.login);
 router.post("/send-verification-link", authController.sendVerificationLink);
-router.get("/verify/:verificationToken", authController.verifyToken);
+router.get("/verify/:verificationToken", authController.verifyToken);   
 
 module.exports = router;

@@ -26,7 +26,7 @@ const Auth = {
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {
         if (err) reject(err);
-        resolve({ userId: result.insertId, email, name, company_id });
+        resolve({ userId: result, email, name, company_id });
       });
     });
   },

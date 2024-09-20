@@ -36,15 +36,19 @@ const Auth = {
   getAllCompanies: async () => {
     const query = `
 SELECT 
-    c.id,
+    c.id AS company_id,
     c.company_name,
-    COUNT(u.id) AS total_users
-FROM 
+    COUNT(DISTINCT CASE WHEN u.role = 'employee' THEN u.id END) AS number_of_employees,
+    COUNT(DISTINCT CASE WHEN u.role = 'candidate' THEN u.id END) AS number_of_candidates
+FROM
     company c
-LEFT JOIN 
-    users u ON c.id = u.company_id
-GROUP BY 
-    c.id `;
+LEFT JOIN
+    users u ON u.company_id = c.id
+GROUP BY
+    c.id, c.company_name
+ORDER BY
+    c.company_name;
+`;
     return new Promise((resolve, reject) => {
       db.query(query, (err, result) => {
         if (err) reject(err);
@@ -97,9 +101,22 @@ GROUP BY c.company_name;
   },
 
   getAllStaffs: async (company_id) => {
-    const query = `SELECT id AS user_id, name, email, phone, role, status, gender, dob, handwritting_url, report_status 
-    FROM users 
-    WHERE company_id = ? AND role = 'employee'`;
+    const query = `SELECT 
+    id AS user_id, 
+    name, 
+    email, 
+    phone, 
+    role, 
+    status, 
+    gender, 
+    dob, 
+    handwritting_url, 
+    report_status 
+FROM 
+    users 
+WHERE 
+    role <> 'company';
+`;
 
     return new Promise((resolve, reject) => {
       db.query(query, [company_id], (err, result) => {

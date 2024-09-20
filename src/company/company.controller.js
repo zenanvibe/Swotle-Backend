@@ -82,6 +82,25 @@ const userController = {
     }
   },
 
+  getAllStaffsByCompanyId: async (req, res) => {
+    const { companyId } = req.params;
+    const { role } = req.query; // Capture role from query parameters
+    const companyIdInt = parseInt(companyId);
+
+    let roleFilter = role ? role.toLowerCase() : null; // Normalize role to lowercase
+
+    try {
+      const companies = await companyModel.getAllStaffsByCompanyId(
+        companyIdInt,
+        roleFilter
+      );
+      res.status(200).json(companies);
+    } catch (error) {
+      logger.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+
   getTotalData: async (req, res) => {
     const { companyId } = req.params;
     const companyIdInt = parseInt(companyId);

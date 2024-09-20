@@ -2,7 +2,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../../config/db.config");
-const { getAllStaffs } = require("./company.controller");
 
 const Auth = {
   createUser: async (name, email, phone, password) => {
@@ -120,6 +119,60 @@ WHERE
 
     return new Promise((resolve, reject) => {
       db.query(query, [company_id], (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  },
+
+  checkUserExists: (email, phone) => {
+    const query = "SELECT id FROM users WHERE email = ? OR phone = ?";
+    const values = [email, phone];
+
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result && result.length > 0);
+        }
+      });
+    });
+  },
+
+  getAllStaffsByCompanyId: async (company_id, roleFilter) => {
+    // Base query
+    let query = `SELECT 
+      id AS user_id, 
+      name, 
+      email, 
+      phone, 
+      role, 
+      status, 
+      gender, 
+      dob, 
+      handwritting_url, 
+      report_status 
+    FROM 
+      users 
+    WHERE 
+      company_id = ?`;
+
+    // Add role filter if a specific role is passed
+    if (roleFilter) {
+      if (roleFilter === "employee" || roleFilter === "candidate") {
+        query += ` AND role = ?`;
+      }
+    } else {
+      query += ` AND role != 'company'`; // Default condition to exclude 'company'
+    }
+
+    return new Promise((resolve, reject) => {
+      const values = roleFilter ? [company_id, roleFilter] : [company_id];
+      db.query(query, values, (err, result) => {
         if (err) {
           reject(err);
         } else {

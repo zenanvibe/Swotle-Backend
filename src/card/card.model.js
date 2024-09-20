@@ -18,14 +18,12 @@ const Auth = {
           WHERE u.id = ? AND u.role = 'company'
           GROUP BY u.name, c.company_name
         `;
-    console.log("Executing query with userId:", userId);
     return new Promise((resolve, reject) => {
       db.query(query, [userId], (err, result) => {
         if (err) {
           console.error("Query error:", err);
           reject(err);
         } else {
-          console.log("Query result:", result);
           resolve(result);
         }
       });

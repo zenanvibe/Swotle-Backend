@@ -31,6 +31,22 @@ const Auth = {
     });
   },
 
+  // Function to check if a user already exists by email or phone
+  checkUserExists: (email, phone) => {
+    const query = "SELECT id FROM users WHERE email = ? OR phone = ?";
+    const values = [email, phone];
+
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        // If result length is greater than 0, a user exists
+        resolve(result.length > 0);
+      });
+    });
+  },
+
   employeeSignup: async (
     name,
     email,
@@ -122,16 +138,37 @@ const Auth = {
     });
   },
 
-  checkUserExists: (email, phone) => {
-    const query = "SELECT id FROM users WHERE email = ? OR phone = ?";
-    const values = [email, phone];
+  employeeSignup: (
+    name,
+    email,
+    phone,
+    password,
+    gender,
+    company_id,
+    username,
+    filePath,
+    dateofsubmission
+  ) => {
+    const query = `INSERT INTO users (name, email, phone, password, gender, company_id,  username, file, dateofsubmission) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [
+      name,
+      email,
+      phone,
+      password,
+      gender,
+      company_id,
+      username,
+      filePath,
+      dateofsubmission,
+    ];
 
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {
         if (err) {
           reject(err);
         } else {
-          resolve(result && result.length > 0);
+          resolve({ userId: result.insertId, email, name });
         }
       });
     });

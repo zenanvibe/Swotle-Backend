@@ -53,48 +53,40 @@ const userController = {
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
-  
-  employeeSignup: async (req, res) => {
-    const { name, email, phone, company_id, gender, dateofbirth } = req.body;
 
+  employeeSignup: async (req, res) => {
+    const { name, email, phone, company_id, gender, username, dateofsubmission } = req.body;
+    const filePath = req.file ? req.file.path : null; // Ensure this captures the file path
+    console.log(filePath);
     try {
       // Check if the user already exists
       const userExists = await authModel.checkUserExists(email, phone);
       if (userExists) {
-        logger.warn(
-          `User with the same email or phone already exists. ${email}, ${phone}`
-        );
+        logger.warn(`User with the same email or phone already exists. ${email}, ${phone}`);
         return res.status(400).json({
           message: "User with the same email or phone already exists.",
         });
       }
-
+  
       const password = phone;
-
+  
       // Create a new user
-      const {
-        userId,
-        email: createdEmail,
-        name: createdName,
-      } = await authModel.employeeSignup(
+      const { userId, email: createdEmail, name: createdName } = await authModel.employeeSignup(
         name,
         email,
         phone,
         password,
         gender,
         company_id,
-        dateofbirth
+        username,
+        filePath, // Ensure filePath is passed correctly
+        dateofsubmission
       );
-
+  
       // Generate JWT token
       const role = "user";
-      const token = authModel.generateJWT(
-        userId,
-        createdEmail,
-        createdName,
-        role
-      );
-
+      const token = authModel.generateJWT(userId, createdEmail, createdName, role);
+  
       logger.info(`User signed up successfully. User ID: ${userId}`);
       res.status(201).json({ userId, token, company_id });
     } catch (error) {
@@ -103,10 +95,11 @@ const userController = {
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
+  
 
   login: async (req, res) => {
     const { email, password, roles } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     try {
       // Check if the user exists
       const user = await authModel.loginUser(email, password, roles);

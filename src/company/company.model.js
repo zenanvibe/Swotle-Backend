@@ -155,7 +155,8 @@ WHERE
       gender, 
       dob, 
       handwritting_url, 
-      report_status 
+      report_status,
+      dateofsubmission  
     FROM 
       users 
     WHERE 

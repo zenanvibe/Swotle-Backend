@@ -44,6 +44,50 @@ const CommentModel = {
       });
     });
   },
+
+  getCompanyEmail: async (userId) => {
+    const query = `
+      SELECT 
+        u1.email AS company_email,
+        u1.id AS company_user_id,
+        u1.name AS company_user_name,
+        u2.id AS current_user_id,
+        u2.name AS current_user_name
+      FROM users u1
+      JOIN users u2
+        ON u1.company_id = u2.company_id
+      WHERE u2.id = ?
+        AND u1.role = 'company'
+        AND u1.id != u2.id LIMIT 100
+    `;
+    const values = [userId]; // Pass userId
+
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) {
+          console.error("Database query error:", err); // Log error for debugging
+          return reject(err);
+        }
+        resolve(result); // Return the result on success
+      });
+    });
+  },
+
+  // Get email by user ID
+  getEmail: async (userId) => {
+    const query = `SELECT email FROM users WHERE id = ?`;
+    const values = [userId]; // Pass as array for parameterized query
+
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) {
+          console.error("Database query error:", err); // Log error for debugging
+          return reject(err);
+        }
+        resolve(result); // Return the result on success
+      });
+    });
+  },
 };
 
 module.exports = CommentModel;

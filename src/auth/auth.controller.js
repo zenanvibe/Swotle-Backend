@@ -2,6 +2,7 @@ const authModel = require("./auth.model");
 const logger = require("../../logger");
 const jwt = require("jsonwebtoken");
 const mailAuthenticator = require("../middleware/mailAuthenticator");
+const axios = require("axios");
 
 const userController = {
   signup: async (req, res) => {
@@ -46,6 +47,26 @@ const userController = {
       );
 
       logger.info(`User signed up successfully. User ID: ${userId}`);
+
+      // Send a welcome email using axios
+      const emailPayload = {
+        to: email, // Send to the email the user signed up with
+        subject: "Welcome to Swotle!",
+        content: `Hi ${name},\n\nThank you for signing up with Swotle. We are excited to have you on board!`,
+      };
+
+      // Send the request
+      await axios.post(
+        "http://localhost:5000/api/v2/email/send-email",
+        emailPayload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Respond with success
       res.status(201).json({ userId, token, company_id });
     } catch (error) {
       console.log(error);
@@ -55,23 +76,37 @@ const userController = {
   },
 
   employeeSignup: async (req, res) => {
-    const { name, email, phone, company_id, gender, username, dateofsubmission } = req.body;
+    const {
+      name,
+      email,
+      phone,
+      company_id,
+      gender,
+      username,
+      dateofsubmission,
+    } = req.body;
     const filePath = req.file ? req.file.path : null; // Ensure this captures the file path
     console.log(filePath);
     try {
       // Check if the user already exists
       const userExists = await authModel.checkUserExists(email, phone);
       if (userExists) {
-        logger.warn(`User with the same email or phone already exists. ${email}, ${phone}`);
+        logger.warn(
+          `User with the same email or phone already exists. ${email}, ${phone}`
+        );
         return res.status(400).json({
           message: "User with the same email or phone already exists.",
         });
       }
-  
+
       const password = phone;
-  
+
       // Create a new user
-      const { userId, email: createdEmail, name: createdName } = await authModel.employeeSignup(
+      const {
+        userId,
+        email: createdEmail,
+        name: createdName,
+      } = await authModel.employeeSignup(
         name,
         email,
         phone,
@@ -82,12 +117,26 @@ const userController = {
         filePath, // Ensure filePath is passed correctly
         dateofsubmission
       );
-  
+
       // Generate JWT token
       const role = "user";
-      const token = authModel.generateJWT(userId, createdEmail, createdName, role);
-  
+      const token = authModel.generateJWT(
+        userId,
+        createdEmail,
+        createdName,
+        role
+      );
+
       logger.info(`User signed up successfully. User ID: ${userId}`);
+
+
+      const emailPayload = {
+        to: email, // Send to the email the user signed up with
+        subject: "Welcome to Swotle!",
+        content: `Hi ${name},\n\nThank you for signing up with Swotle. We are excited to have you on board!`,
+      };
+
+      
       res.status(201).json({ userId, token, company_id });
     } catch (error) {
       console.log(error);
@@ -95,7 +144,6 @@ const userController = {
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
-  
 
   login: async (req, res) => {
     const { email, password, roles } = req.body;
@@ -191,7 +239,7 @@ const userController = {
 
       logger.info(`Email verified for: ${decodedToken.email}`);
 
-      res.redirect(`http://zenanvibe.com/`);
+      res.redirect(`http://Swotle.com/`);
     } catch (error) {
       logger.error(`Error verifying email: ${error.message}`);
       res.redirect(`${process.env.CLIENT_URL}/email-verification-failed`);

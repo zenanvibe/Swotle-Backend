@@ -174,6 +174,42 @@ const Auth = {
     });
   },
 
+
+  employeeDashboardSignup: (
+    name,
+    email,
+    phone,
+    password,
+    gender,
+    company_id,
+    username,
+    filePath,
+    dateofsubmission
+  ) => {
+    const query = `INSERT INTO users (name, email, phone, password, gender, company_id, username, file, dateofsubmission) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [
+      name,
+      email,
+      phone,
+      password,
+      gender,
+      company_id,
+      username,
+      filePath, // Store the file path in the database
+      dateofsubmission,
+    ];
+
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ userId: result.insertId, email, name });
+        }
+      });
+    });
+  },
   checkUserVerified: (email) => {
     const query =
       "SELECT id FROM users WHERE email_verification = 1 and email = ?";

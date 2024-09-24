@@ -129,17 +129,85 @@ const userController = {
 
       logger.info(`User signed up successfully. User ID: ${userId}`);
 
-
       const emailPayload = {
         to: email, // Send to the email the user signed up with
         subject: "Welcome to Swotle!",
         content: `Hi ${name},\n\nThank you for signing up with Swotle. We are excited to have you on board!`,
       };
 
-      
       res.status(201).json({ userId, token, company_id });
     } catch (error) {
       console.log(error);
+      logger.error(`Error signing up user: ${error.message}`);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+
+  employeeDashboardSignup: async (req, res) => {
+    const {
+      name,
+      email,
+      phone,
+      company_id,
+      gender,
+      username,
+    } = req.body;
+    const file = req.file; // The uploaded file
+    try {
+      // Check if the user already exists
+      const userExists = await authModel.checkUserExists(email, phone);
+      if (userExists) {
+        logger.warn(
+          `User with the same email or phone already exists. ${email}, ${phone}`
+        );
+        return res.status(400).json({
+          message: "User with the same email or phone already exists.",
+        });
+      }
+
+      const password = phone; // Set the password as phone for simplicity
+
+      // Save the file path to the database (if file exists)
+      const filePath = file ? file.key : null; // 'file.key' holds the S3 file path
+      const fullpath = "https://neptunezen.blr1.digitaloceanspaces.com/"+filePath
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, "0");
+      var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+      var yyyy = today.getFullYear();
+
+      today = yyyy + "/" + mm + "/" + dd;
+
+      // Create a new employee user in the database
+      const {
+        userId,
+        email: createdEmail,
+        name: createdName,
+      } = await authModel.employeeDashboardSignup(
+        name,
+        email,
+        phone,
+        password,
+        gender,
+        company_id,
+        username,
+        fullpath, // Save the file path
+        today
+      );
+
+      // Generate JWT token
+      const role = "user";
+      const token = authModel.generateJWT(
+        userId,
+        createdEmail,
+        createdName,
+        role
+      );
+
+      logger.info(`User signed up successfully. User ID: ${userId}`);
+
+      // Respond with success, include userId and token
+      res.status(201).json({ userId, token, company_id, filePath });
+    } catch (error) {
       logger.error(`Error signing up user: ${error.message}`);
       res.status(500).json({ message: "Internal Server Error" });
     }

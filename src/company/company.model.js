@@ -109,7 +109,7 @@ GROUP BY c.company_name;
     status, 
     gender, 
     dob, 
-    handwritting_url, 
+    report_url, 
     report_status 
 FROM 
     users 
@@ -154,7 +154,7 @@ WHERE
       status, 
       gender, 
       dob, 
-      handwritting_url, 
+      file as report_url, 
       report_status,
       dateofsubmission  
     FROM 

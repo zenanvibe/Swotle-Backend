@@ -86,7 +86,6 @@ const userController = {
       dateofsubmission,
     } = req.body;
     const filePath = req.file ? req.file.path : null; // Ensure this captures the file path
-    console.log(filePath);
     try {
       // Check if the user already exists
       const userExists = await authModel.checkUserExists(email, phone);
@@ -144,14 +143,7 @@ const userController = {
   },
 
   employeeDashboardSignup: async (req, res) => {
-    const {
-      name,
-      email,
-      phone,
-      company_id,
-      gender,
-      username,
-    } = req.body;
+    const { name, email, phone, role, company_id, gender, username } = req.body;
     const file = req.file; // The uploaded file
     try {
       // Check if the user already exists
@@ -169,13 +161,15 @@ const userController = {
 
       // Save the file path to the database (if file exists)
       const filePath = file ? file.key : null; // 'file.key' holds the S3 file path
-      const fullpath = "https://neptunezen.blr1.digitaloceanspaces.com/"+filePath
+      const fullpath =
+        "https://neptunezen.blr1.digitaloceanspaces.com/" + filePath;
       var today = new Date();
       var dd = String(today.getDate()).padStart(2, "0");
       var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
       var yyyy = today.getFullYear();
 
-      today = yyyy + "/" + mm + "/" + dd;
+      const Finaltoday = `${yyyy}-${mm}-${dd}`;
+      console.log("date: " + Finaltoday); // Change to ISO format
 
       // Create a new employee user in the database
       const {
@@ -186,16 +180,15 @@ const userController = {
         name,
         email,
         phone,
-        password,
+        password, // Correctly pass password here
+        role, // Correctly pass the role here (e.g., 'candidate')
         gender,
         company_id,
-        username,
-        fullpath, // Save the file path
-        today
+        fullpath, // Correctly pass the file URL here (fullpath should go into the 'file' field)
+        Finaltoday // Pass the date correctly here
       );
 
       // Generate JWT token
-      const role = "user";
       const token = authModel.generateJWT(
         userId,
         createdEmail,
@@ -215,7 +208,6 @@ const userController = {
 
   login: async (req, res) => {
     const { email, password, roles } = req.body;
-    console.log(req.body);
     try {
       // Check if the user exists
       const user = await authModel.loginUser(email, password, roles);

@@ -14,7 +14,7 @@ const Auth = {
     u.status,
     u.gender,
     u.dob,
-    u.handwritting_url,
+    u.report_url,
     u.report_status,
     c.company_name 
 FROM 

@@ -21,6 +21,40 @@ const CommentModel = {
     });
   },
 
+  getUserRole: async (userId) => {
+    const query = `SELECT role FROM users WHERE id = ?`;
+    const values = [userId];
+
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) {
+          console.error("Database query error:", err);
+          return reject(err);
+        }
+        resolve(result);
+      });
+    });
+  },
+
+  // Fetch admin email for the given company
+  getAdminEmail: async (userId) => {
+    const query = `
+      SELECT email FROM users 
+      WHERE role = 'admin' 
+      LIMIT 1`;
+    const values = [userId];
+
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) {
+          console.error("Database query error:", err);
+          return reject(err);
+        }
+        resolve(result);
+      });
+    });
+  },
+
   // Get all comments (and their replies) about a specific user
   getComments: async (user_id) => {
     const query = `

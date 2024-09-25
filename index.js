@@ -55,7 +55,8 @@ const companyRoutes = require("./src/company/company.routes");
 const commentRoutes = require("./src/comment/comment.router");
 const cardRoutes = require("./src/card/card.routes");
 const filesUploadRoutes = require("./src/fileUpload/uploadFIles.routes");
-const emailRoutes = require("./src/email/email.routes")
+const emailRoutes = require("./src/email/email.routes");
+const reportUpload = require("./src/reportUpload/reportupload.route");
 
 // Version 1 middleware
 app.use("/api/v1/generate", generateRoutes);
@@ -71,7 +72,8 @@ app.use("/api/v2/comments", commentRoutes);
 app.use("/api/v2/users", userRoutes);
 app.use("/api/v2/card", cardRoutes);
 app.use("/api/v2/spaces", filesUploadRoutes);
-app.use("/api/v2/email",emailRoutes)
+app.use("/api/v2/email", emailRoutes);
+app.use("/api/v2/storage", reportUpload);
 
 // listen for requests
 app.listen(port, () => {

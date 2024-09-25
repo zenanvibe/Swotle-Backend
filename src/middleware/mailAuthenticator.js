@@ -31,7 +31,7 @@ function mailAuthenticator(toMail, subject, content) {
         logger.warn("Error sending email: ", error);
         reject(error); // reject the promise if there's an error
       } else {
-        logger.info("Email sent: ", info.response);
+        logger.info("Email sent: ", info);
         resolve(info.response); // resolve the promise when email is sent
       }
     });

@@ -57,15 +57,15 @@ const commentController = {
       const emailSubject = `New Comment for ${currentUserName} - Swotle`;
       const emailContent = `Hello ${companyUserName}, \n\nHope You are Doing good,\nA new comment has been added for your company's employee:\n\n${comment}\n\nFrom: ${authorEmail}`;
 
-      const emailSent = mailAuthenticator(
-        emailRecipient,
-        emailSubject,
-        emailContent
-      );
+      // const emailSent = mailAuthenticator(
+      //   emailRecipient,
+      //   emailSubject,
+      //   emailContent
+      // );
 
-      if (!emailSent) {
-        console.error("Error sending email notification");
-      }
+      // if (!emailSent) {
+      //   console.error("Error sending email notification");
+      // }
 
       res.status(201).json(newComment);
     } catch (error) {

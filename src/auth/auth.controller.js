@@ -56,15 +56,15 @@ const userController = {
       };
 
       // Send the request
-      await axios.post(
-        "http://localhost:5000/api/v2/email/send-email",
-        emailPayload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      // await axios.post(
+      //   "http://localhost:5000/api/v2/email/send-email",
+      //   emailPayload,
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
 
       // Respond with success
       res.status(201).json({ userId, token, company_id });

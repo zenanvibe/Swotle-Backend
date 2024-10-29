@@ -32,7 +32,7 @@ const Auth = {
   },
 
   // Function to check if a user already exists by email or phone
-  checkUserExists: (email, phone) => {
+    checkUserExists: (email, phone) => {
     const query = "SELECT id FROM users WHERE email = ? OR phone = ?";
     const values = [email, phone];
 

@@ -142,7 +142,7 @@ const userController = {
     }
   },
 
-  employeeDashboardSignup: async (req, res) => {
+    employeeDashboardSignup: async (req, res) => {
     const { name, email, phone, role, company_id, gender, username } = req.body;
     const file = req.file; // The uploaded file
     try {

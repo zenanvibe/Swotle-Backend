@@ -8,6 +8,7 @@ router.post("/add",authenticateJwt, CommentController.addComment);
 
 // GET route to retrieve all comments
 router.get("/getcomments/:userId",authenticateJwt,CommentController.getCommentsByUser)
+// router.get("/getadmincomments/:userId",authenticateJwt,CommentController.getAdminComments)
 router.get("/getcomments",authenticateJwt,CommentController.getComments);
 
 module.exports = router;

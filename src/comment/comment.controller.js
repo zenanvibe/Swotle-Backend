@@ -92,6 +92,25 @@ const commentController = {
   },
 
   // comment.controller.js
+  // getAdminComments: async (req, res) => {
+  //   const { userId } = req.params;
+  //   const userIdInt = parseInt(userId);
+
+  //   try {
+  //     const comments = await CommentModel.getAdminComments(userIdInt);
+  //     if (comments.length === 0) {
+  //       return res
+  //         .status(404)
+  //         .json({ message: "No admin comments found for this user." });
+  //     }
+  //     res.status(200).json(comments);
+  //   } catch (error) {
+  //     console.error(
+  //       `Error fetching admin comments for user ${userId}: ${error.message}`
+  //     );
+  //     res.status(500).json({ message: "Internal Server Error" });
+  //   }
+  // },
   getCommentsByUser: async (req, res) => {
     const { userId } = req.params;
     const userIdInt = parseInt(userId);

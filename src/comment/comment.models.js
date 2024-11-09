@@ -56,6 +56,29 @@ const CommentModel = {
   },
 
   // Get all comments (and their replies) about a specific user
+  // getAdminComments: async (user_id) => {
+  //   const query = `
+  //     SELECT c.*, u.name AS author_name
+  //     FROM comments c
+  //     JOIN users u ON c.author_id = u.id
+  //     WHERE c.user_id = ?
+  //     AND u.role = 'admin'
+  //     ORDER BY c.created_at ASC
+  //   `;
+  //   const values = user_id;
+
+  //   return new Promise((resolve, reject) => {
+  //     db.query(query, values, (err, result) => {
+  //       if (err) {
+  //         console.error("Database query error:", err);
+  //         return reject(err);
+  //       }
+  //       resolve(result);
+  //     });
+  //   });
+  // },
+
+  // models.js
   getComments: async (user_id) => {
     const query = `
       SELECT c.*, u.name AS author_name 

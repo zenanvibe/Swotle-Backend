@@ -183,6 +183,64 @@ WHERE
     });
   },
 
+  updateUser: async (userId, updates) => {
+    // Create dynamic query based on the provided fields
+    const validFields = {
+      name: "name",
+      email: "email",
+      phone: "phone",
+      role: "role",
+      status: "status",
+    };
+
+    // Validate the field
+    if (!validFields[updates.field]) {
+      throw new Error("Invalid field name");
+    }
+
+    const query = `
+      UPDATE users 
+      SET ${validFields[updates.field]} = ?
+      WHERE id = ?
+    `;
+
+    return new Promise((resolve, reject) => {
+      db.query(query, [updates.value, userId], (err, result) => {
+        if (err) {
+          console.error("Database error:", err);
+          reject(err);
+        } else {
+          if (result.affectedRows === 0) {
+            reject(new Error("User not found"));
+          } else {
+            resolve(result);
+          }
+        }
+      });
+    });
+  },
+  //delete
+  deleteUser: async (userId) => {
+    const query = `
+      DELETE FROM users 
+      WHERE id = ?
+    `;
+
+    return new Promise((resolve, reject) => {
+      db.query(query, [userId], (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (result.affectedRows === 0) {
+            reject(new Error("User not found"));
+          } else {
+            resolve(result);
+          }
+        }
+      });
+    });
+  },
+
   checkUserExists: (email, phone) => {
     const query = "SELECT id FROM users WHERE email = ? OR phone = ?";
     const values = [email, phone];

@@ -102,6 +102,33 @@ const CommentModel = {
     });
   },
 
+  //update comments
+  updateComment: async (comment_id, newComment) => {
+    const query = `
+      UPDATE comments 
+      SET comment = ?, updated_at = CURRENT_TIMESTAMP 
+      WHERE id = ?
+    `;
+    const values = [newComment, comment_id]; // Parameterized query to prevent SQL injection
+  
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) {
+          console.error("Database query error:", err); // Log error for debugging
+          return reject(err); // Reject promise with error
+        }
+  
+        // Check if any rows were affected to confirm the update
+        if (result.affectedRows === 0) {
+          return reject(new Error("No comment found with the given ID."));
+        }
+  
+        resolve({ message: "Comment updated successfully." }); // Success response
+      });
+    });
+  },
+  
+
   getCompanyEmail: async (userId) => {
     const query = `
       SELECT 

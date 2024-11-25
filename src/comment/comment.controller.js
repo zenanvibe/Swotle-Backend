@@ -91,6 +91,24 @@ const commentController = {
     }
   },
 
+  //edit comment
+  editComments: async (req, res) => {
+    const { id } = req.params;
+    const { comment } = req.body;
+
+    if (!comment) {
+      return res.status(400).json({ message: "Comment is required." });
+    }
+
+    try {
+      const result = await CommentModel.updateComment(id, comment);
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error updating comment:", error);
+      res.status(500).json({ message: "Internal server error." });
+    }
+  },
+
   // comment.controller.js
   // getAdminComments: async (req, res) => {
   //   const { userId } = req.params;

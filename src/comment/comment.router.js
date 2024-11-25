@@ -11,4 +11,7 @@ router.get("/getcomments/:userId",authenticateJwt,CommentController.getCommentsB
 // router.get("/getadmincomments/:userId",authenticateJwt,CommentController.getAdminComments)
 router.get("/getcomments",authenticateJwt,CommentController.getComments);
 
+router.put('/edit/:id', authenticateJwt,CommentController.editComments);
+  
+
 module.exports = router;

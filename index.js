@@ -8,7 +8,7 @@ dotenv.config();
 
 const app = express();
 
-const port = 5000 || 5000;
+// const port = 5000 || 5000;
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -75,7 +75,7 @@ app.use("/api/v2/spaces", filesUploadRoutes);
 app.use("/api/v2/email", emailRoutes);
 app.use("/api/v2/storage", reportUpload);
 
-// listen for requests
-app.listen(port, () => {
-  console.log(`Api Swotle is listening on ${port}/`);
+app.listen(5000, '0.0.0.0', () => {
+  console.log("API is running...");
 });
+

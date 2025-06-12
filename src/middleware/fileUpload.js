@@ -18,7 +18,6 @@ const uploadOnline = multer({
   storage: multerS3({
     s3: s3,
     bucket: "swotle-uploads", // Your bucket name
-    acl: "public-read",
     key: function (req, file, cb) {
       const folderPath = "swotle/uploads/handwritting/"; // Your custom S3 folder
       const fileName = Date.now() + "_" + file.originalname;

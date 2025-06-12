@@ -162,7 +162,7 @@ const userController = {
       // Save the file path to the database (if file exists)
       const filePath = file ? file.key : null; // 'file.key' holds the S3 file path
       const fullpath =
-        "https://neptunezen.blr1.digitaloceanspaces.com/" + filePath;
+        "https://swotle-uploads.s3.us-east-1.amazonaws.com/" + filePath;
       var today = new Date();
       var dd = String(today.getDate()).padStart(2, "0");
       var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!

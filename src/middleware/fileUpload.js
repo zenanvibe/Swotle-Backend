@@ -4,43 +4,40 @@ const { S3Client } = require("@aws-sdk/client-s3");
 const dotenv = require("dotenv");
 dotenv.config();
 
-// S3 setup for DigitalOcean Spaces
+// S3 setup for AWS
 const s3 = new S3Client({
-  forcePathStyle: false,
-  region: "blr1",
-  endpoint: "https://blr1.digitaloceanspaces.com",
+  region: "us-east-1", // Your S3 bucket region
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
 
-// Online upload: Upload file to DigitalOcean Spaces
+// Online upload: Upload file to AWS S3
 const uploadOnline = multer({
   storage: multerS3({
     s3: s3,
-    bucket: "neptunezen", // Replace with your bucket name
-    acl: "public-read", // Make the file public
+    bucket: "swotle-uploads", // Your bucket name
+    acl: "public-read",
     key: function (req, file, cb) {
-      const folderPath = "zenanvibe/swotle/handwritting/"; // Folder path in DigitalOcean Spaces
-      const fileName = Date.now() + "_" + file.originalname; // Use timestamp to avoid collisions
+      const folderPath = "swotle/uploads/handwritting/"; // Your custom S3 folder
+      const fileName = Date.now() + "_" + file.originalname;
       cb(null, folderPath + fileName);
     },
   }),
 });
 
-// Offline upload: Store file locally on the server
+// Offline upload: Store file locally
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "src/uploads"); // Local upload directory
+    cb(null, "src/uploads");
   },
   filename: function (req, file, cb) {
     const uniquePrefix = Date.now() + "-";
-    cb(null, uniquePrefix + file.originalname); // Unique filename with timestamp
+    cb(null, uniquePrefix + file.originalname);
   },
 });
 
 const uploadOffline = multer({ storage: storage });
 
-// Export both the online and offline upload methods
 module.exports = { uploadOffline, uploadOnline };

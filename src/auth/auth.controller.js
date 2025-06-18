@@ -147,15 +147,15 @@ const userController = {
     const file = req.file; // The uploaded file
     try {
       // Check if the user already exists
-      const userExists = await authModel.checkUserExists(email, phone);
-      if (userExists) {
-        logger.warn(
-          `User with the same email or phone already exists. ${email}, ${phone}`
-        );
-        return res.status(400).json({
-          message: "User with the same email or phone already exists.",
-        });
-      }
+      // const userExists = await authModel.checkUserExists(email, phone);
+      // if (userExists) {
+      //   logger.warn(
+      //     `User with the same email or phone already exists. ${email}, ${phone}`
+      //   );
+      //   return res.status(400).json({
+      //     message: "User with the same email or phone already exists.",
+      //   });
+      // }
 
       const password = phone; // Set the password as phone for simplicity
 

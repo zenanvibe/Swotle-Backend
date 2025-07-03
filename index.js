@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const fs = require("fs");
+const https = require("https");
 const dotenv = require("dotenv");
 const dbconn = require("./config/db.config");
 const cors = require("cors"); // Import cors module
@@ -9,6 +11,11 @@ dotenv.config();
 const app = express();
 
 // const port = 5000 || 5000;
+const sslOptions = {
+  key: fs.readFileSync('/etc/letsencrypt/live/dashboardapi.swotle.com/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/dashboardapi.swotle.com/fullchain.pem')
+};
+
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -75,7 +82,9 @@ app.use("/api/v2/spaces", filesUploadRoutes);
 app.use("/api/v2/email", emailRoutes);
 app.use("/api/v2/storage", reportUpload);
 
-app.listen(5000, '0.0.0.0', () => {
-  console.log("API is running...");
+https.createServer(sslOptions, app).listen(5500, '0.0.0.0', () => {
+  console.log("HTTPS API is running on port 5500...");
 });
+
+
 

@@ -294,6 +294,29 @@ WHERE
       });
     });
   },
+
+  // Update company (only company_name)
+  updateCompany: async (companyId, updates) => {
+    if (!updates.company_name) throw new Error("company_name is required to update");
+    const query = `UPDATE company SET company_name = ? WHERE id = ?`;
+    return new Promise((resolve, reject) => {
+      db.query(query, [updates.company_name, companyId], (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+  },
+
+  // Delete company
+  deleteCompany: async (companyId) => {
+    const query = "DELETE FROM company WHERE id = ?";
+    return new Promise((resolve, reject) => {
+      db.query(query, [companyId], (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+  },
 };
 
 module.exports = Auth;

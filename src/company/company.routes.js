@@ -33,6 +33,9 @@ router.delete("/users/:userId", authenticateJwt, async (req, res) => {
   }
 });
 
+router.put("/:companyId", authenticateJwt, companyController.updateCompany);
+router.delete("/:companyId", authenticateJwt, companyController.deleteCompany);
+
 router.get(
   "/totaldata/:companyId",
   authenticateJwt,

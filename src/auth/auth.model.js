@@ -82,27 +82,35 @@ const Auth = {
     });
   },
 
-  loginUser: async (email, password, roles) => {
+  loginUser: async (email, password, role) => {
     const query = "SELECT * FROM users WHERE email = ? AND role = ?";
-    const values = [email, roles];
+    const values = [email, role];
 
     return new Promise((resolve, reject) => {
       db.query(query, values, async (err, result) => {
         if (err) {
+          console.log('DB error:', err);
           reject(err);
-        } else if (result.length === 0 || result[0].deleted_at == 1) {
-          resolve(null); // User not found
+        } else if (result.length === 0) {
+          console.log('No user found for:', values); // <--- LOG
+          resolve(null);
+        } else if (result[0].deleted_at == 1) {
+          console.log('User marked as deleted:', result[0].email); // <--- LOG
+          resolve(null);
         } else {
+          console.log('User found:', result[0].email, 'Checking password...');
           const match = await bcrypt.compare(password, result[0].password);
+          console.log('Password match:', match); // <--- LOG
           if (match) {
-            resolve(result[0]); // Successful login
+            resolve(result[0]);
           } else {
-            resolve(null); // Incorrect password
+            resolve(null);
           }
         }
       });
     });
-  },
+},
+
 
   findOrCreateCompany: async (company_name) => {
     return new Promise((resolve, reject) => {
@@ -247,6 +255,55 @@ const Auth = {
         } else {
           resolve();
         }
+      });
+    });
+  },
+
+  // Set password reset token and expiry for a user
+  setResetPasswordToken: (email, token, expires) => {
+    const query = "UPDATE users SET reset_password_token = ?, reset_password_expires = ? WHERE email = ?";
+    const values = [token, expires, email];
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+  },
+
+  // Get user by reset token (and check expiry)
+  getUserByResetToken: (token) => {
+    const query = "SELECT * FROM users WHERE reset_password_token = ? AND reset_password_expires > NOW()";
+    const values = [token];
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) reject(err);
+        else resolve(result.length > 0 ? result[0] : null);
+      });
+    });
+  },
+
+  // Clear reset token after use
+  clearResetPasswordToken: (userId) => {
+    const query = "UPDATE users SET reset_password_token = NULL, reset_password_expires = NULL WHERE id = ?";
+    const values = [userId];
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+  },
+
+  // Update password for user (by id)
+  updatePassword: async (userId, newPassword) => {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const query = "UPDATE users SET password = ? WHERE id = ?";
+    const values = [hashedPassword, userId];
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
       });
     });
   },

@@ -14,6 +14,7 @@ const logger = winston.createLogger({
         }),
         winston.format.timestamp({
             format: () =>
+                
                 moment().tz("Asia/Kolkata").format("YY-MM-DD HH:mm:ss"),
         }),
         winston.format.printf(

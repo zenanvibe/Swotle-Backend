@@ -23,6 +23,8 @@ router.post("/employee/signup", upload.single("file"), authController.employeeSi
 router.post("/dashboard/employee/signup", uploadOnline.single("file"), authController.employeeDashboardSignup);
 router.post("/login", authController.login);
 router.post("/send-verification-link", authController.sendVerificationLink);
-router.get("/verify/:verificationToken", authController.verifyToken);   
+router.get("/verify/:verificationToken", authController.verifyToken);
+router.post("/forgot-password", authController.forgotPassword);
+router.post("/reset-password", authController.resetPassword);
 
 module.exports = router;

@@ -3,6 +3,7 @@ const logger = require("../../logger");
 const jwt = require("jsonwebtoken");
 const mailAuthenticator = require("../middleware/mailAuthenticator");
 const axios = require("axios");
+const crypto = require("crypto");
 
 const userController = {
   signup: async (req, res) => {
@@ -207,15 +208,16 @@ const userController = {
   },
 
   login: async (req, res) => {
-    const { email, password, roles } = req.body;
+    const { email, password, role } = req.body;
+    console.log('Login attempt payload:', req.body);
     try {
       // Check if the user exists
-      const user = await authModel.loginUser(email, password, roles);
+      const user = await authModel.loginUser(email, password, role);
       if (!user) {
         return res.status(401).json({
           success: false,
           status: 401,
-          message: "Please Check you Email, Password and Roles",
+          message: "Please Check you Email, Password and Role",
         });
       }
       // Generate JWT token
@@ -228,7 +230,7 @@ const userController = {
       logger.info(`User logged in successfully. User ID: ${user.id}`);
       res
         .status(200)
-        .json({ userId: user.id, token, roles, company_id: user.company_id });
+        .json({ userId: user.id, token, role, company_id: user.company_id });
     } catch (error) {
       logger.error(`Error logging in user: ${error.message}`);
       res.status(500).json({ message: "Internal Server Error" });
@@ -303,6 +305,63 @@ const userController = {
     } catch (error) {
       logger.error(`Error verifying email: ${error.message}`);
       res.redirect(`${process.env.CLIENT_URL}/email-verification-failed`);
+    }
+  },
+
+  // Forgot Password: send reset link
+  forgotPassword: async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+    try {
+      // Check if user exists
+      const userExists = await authModel.checkUserExists(email, "");
+      if (!userExists) {
+        return res.status(404).json({ message: "No user found with that email" });
+      }
+      // Generate token and expiry
+      const token = crypto.randomBytes(32).toString("hex");
+      const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+      await authModel.setResetPasswordToken(email, token, expires);
+      // Send email
+      const resetLink = `${process.env.CLIENT_URL || "http://localhost:3000"}/reset-password?token=${token}`;
+      await mailAuthenticator(
+        email,
+        "Password Reset Request",
+        `You requested a password reset. Click the link to reset your password: ${resetLink}\n\nThis link will expire in 1 hour.`
+      );
+      return res.status(200).json({ message: "Password reset email sent" });
+    } catch (error) {
+      logger.error(`Error in forgotPassword: ${error.message}`);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+
+  // Reset Password: validate token, update password
+  resetPassword: async (req, res) => {
+    const { token, password, confirmPassword } = req.body;
+    if (!token || !password || !confirmPassword) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+    // Password strength: min 8 chars, letters & numbers
+    if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password)) {
+      return res.status(400).json({ message: "Password must be at least 8 characters and include letters and numbers" });
+    }
+    try {
+      const user = await authModel.getUserByResetToken(token);
+      if (!user) {
+        return res.status(400).json({ message: "Invalid or expired token" });
+      }
+      await authModel.updatePassword(user.id, password);
+      await authModel.clearResetPasswordToken(user.id);
+      return res.status(200).json({ message: "Password has been reset successfully" });
+    } catch (error) {
+      logger.error(`Error in resetPassword: ${error.message}`);
+      return res.status(500).json({ message: "Internal Server Error" });
     }
   },
 };

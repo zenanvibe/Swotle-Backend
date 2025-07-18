@@ -12,8 +12,8 @@ const app = express();
 
 const port = 5000 || 5000;
 const sslOptions = {
-  key: fs.readFileSync('/etc/letsencrypt/live/dashboardapi.swotle.com/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/dashboardapi.swotle.com/fullchain.pem')
+  key: fs.readFileSync('/home/ec2-user/Swotle-Backend/certs/privkey.pem'),
+  cert: fs.readFileSync('/home/ec2-user/Swotle-Backend/certs/fullchain.pem'),
 };
 
 

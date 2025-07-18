@@ -16,12 +16,12 @@ const transporter = nodemailer.createTransport({
 });
 
 // Make the mailAuthenticator return a Promise
-function mailAuthenticator(toMail, subject, content) {
+function mailAuthenticator(toMail, subject, content, isHtml = false) {
   const mailOptions = {
     from: process.env.EMAIL,
     to: toMail,
     subject: subject,
-    text: content,
+    ...(isHtml ? { html: content } : { text: content }),
   };
 
   // Return a Promise

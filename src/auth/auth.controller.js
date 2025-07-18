@@ -326,10 +326,15 @@ const userController = {
       await authModel.setResetPasswordToken(email, token, expires);
       // Send email
       const resetLink = `${process.env.CLIENT_URL || "http://localhost:3000"}/reset-password?token=${token}`;
+      const htmlContent = `
+        <p>You requested a password reset. <a href="${resetLink}">Click here to reset your password</a>.</p>
+        <p>This link will expire in 1 hour.</p>
+      `;
       await mailAuthenticator(
         email,
         "Password Reset Request",
-        `You requested a password reset. Click the link to reset your password: ${resetLink}\n\nThis link will expire in 1 hour.`
+        htmlContent,
+        true // isHtml flag
       );
       return res.status(200).json({ message: "Password reset email sent" });
     } catch (error) {

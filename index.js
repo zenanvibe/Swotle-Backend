@@ -82,8 +82,8 @@ app.use("/api/v2/spaces", filesUploadRoutes);
 app.use("/api/v2/email", emailRoutes);
 app.use("/api/v2/storage", reportUpload);
 
-https.createServer(sslOptions, app).listen(5500, '0.0.0.0', () => {
-  console.log("HTTPS API is running on port 5500...");
+https.createServer(sslOptions, app).listen(5501, '0.0.0.0', () => {
+  console.log("HTTPS API is running on port 5501...");
 });
 
 

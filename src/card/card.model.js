@@ -9,12 +9,12 @@ const Auth = {
           SELECT
             u.name AS user_name,
             c.company_name,
-            COUNT(DISTINCT CASE WHEN emp.role = 'employee' AND emp.status = 'active' THEN emp.id END) AS number_of_employees,
-            COUNT(DISTINCT CASE WHEN ic.role = 'candidate' AND ic.status = 'active' THEN ic.id END) AS number_of_interview_candidates
+            COUNT(DISTINCT CASE WHEN emp.role = 'existing_employee' AND emp.status = 'active' THEN emp.id END) AS number_of_employees,
+            COUNT(DISTINCT CASE WHEN ic.role = 'interview_candidate' AND ic.status = 'active' THEN ic.id END) AS number_of_interview_candidates
           FROM users u
           JOIN company c ON u.company_id = c.id
-          LEFT JOIN users emp ON emp.company_id = u.company_id AND emp.role = 'employee' AND emp.status = 'active'
-          LEFT JOIN users ic ON ic.company_id = u.company_id AND ic.role = 'candidate' AND ic.status = 'active'
+          LEFT JOIN users emp ON emp.company_id = u.company_id AND emp.role = 'existing_employee' AND emp.status = 'active'
+          LEFT JOIN users ic ON ic.company_id = u.company_id AND ic.role = 'interview_candidate' AND ic.status = 'active'
           WHERE u.id = ? AND u.role = 'company'
           GROUP BY u.name, c.company_name
         `;

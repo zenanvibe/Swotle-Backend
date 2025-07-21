@@ -3,6 +3,20 @@ const logger = require("../../logger");
 const jwt = require("jsonwebtoken");
 const mailAuthenticator = require("../middleware/mailAuthenticator");
 
+const formatUsersRole = (users) => {
+  const roleDisplayMap = {
+    existing_employee: "Existing Employee",
+    interview_candidate: "Interview Candidate",
+    company: "Company",
+    user: "User",
+  };
+
+  return users.map((user) => ({
+    ...user,
+    role: roleDisplayMap[user.role] || user.role,
+  }));
+};
+
 const userController = {
   signup: async (req, res) => {
     const { name, email, phone, password } = req.body;
@@ -76,7 +90,7 @@ const userController = {
     const companyIdInt = parseInt(companyId);
     try {
       const companies = await companyModel.getAllStaffs(companyIdInt);
-      res.status(200).json(companies);
+      res.status(200).json(formatUsersRole(companies));
     } catch (error) {
       logger.error(error);
     }
@@ -94,7 +108,7 @@ const userController = {
         companyIdInt,
         roleFilter
       );
-      res.status(200).json(companies);
+      res.status(200).json(formatUsersRole(companies));
     } catch (error) {
       logger.error(error);
       res.status(500).json({ message: "Internal Server Error" });

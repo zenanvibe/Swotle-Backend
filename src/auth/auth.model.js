@@ -4,12 +4,15 @@ const jwt = require("jsonwebtoken");
 const db = require("../../config/db.config");
 const { employeeSignup } = require("./auth.controller");
 
+const ALLOWED_ROLES = ['existing_employee', 'interview_candidate', 'company', 'user'];
+
 const Auth = {
-  createUser: async (name, email, phone, password, gender, company_id) => {
+  createUser: async (name, email, phone, password, gender, company_id, role = 'company') => {
+    if (!ALLOWED_ROLES.includes(role)) {
+      throw new Error(`Invalid role: ${role}`);
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const status = "active"; // or set to your desired default status
-    const role = "company";
-
     const query =
       "INSERT INTO users (name, email, phone, password, status, role, company_id,gender) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
     const values = [
@@ -54,12 +57,14 @@ const Auth = {
     password,
     gender,
     company_id,
-    dateofbirth
+    dateofbirth,
+    role = 'existing_employee'
   ) => {
+    if (!ALLOWED_ROLES.includes(role)) {
+      throw new Error(`Invalid role: ${role}`);
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const status = "active"; // or set to your desired default status
-    const role = "employee";
-
     const query =
       "INSERT INTO users (name, email, phone, password, status, role, company_id,gender,dob) VALUES (?, ?, ?, ?, ?, ?, ?,?,?)";
     const values = [
@@ -182,39 +187,77 @@ const Auth = {
     });
   },
 
+  checkDuplicates: (params) => {
+    const conditions = [];
+    const values = [];
+
+    if (params.email) {
+        conditions.push("email = ?");
+        values.push(params.email);
+    }
+
+    if (params.phone) {
+        conditions.push("phone = ?");
+        values.push(params.phone);
+    }
+
+    if (conditions.length === 0) {
+        // No fields to check, so no duplicates.
+        return Promise.resolve(false);
+    }
+
+    const query = `SELECT id FROM users WHERE ${conditions.join(" OR ")}`;
+
+    return new Promise((resolve, reject) => {
+        db.query(query, values, (err, result) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(result.length > 0); // true if duplicate found
+        });
+    });
+  },
+
   employeeDashboardSignup: (
     name,
     email,
     phone,
-    role,
     password,
+    role,
     gender,
     company_id,
     fullpath, // Save the file path
     Finaltoday
   ) => {
-    console.log(Finaltoday);
-    const query = `INSERT INTO users (name, email, phone, password, role, gender, company_id, file, dateofsubmission) 
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    // Set default role if not provided or empty
+    const userRole = role ? role.trim() : null;
+    if (!ALLOWED_ROLES.includes(userRole)) {
+      throw new Error(`Invalid role: ${userRole}`);
+    }
 
-    const values = [
-      name, // Correct name
-      email, // Correct email
-      phone,
-      role, // Correct role (candidate, etc.) // Correct phone
-      password, // Password (should be passed in the correct position)
-      gender, // Correct gender (male, etc.)
-      company_id, // Correct company_id
-      fullpath, // This is the file path (URL), pass it in the file field
-      Finaltoday, // This is the date of submission
-    ];
+    const fields = ["name", "password", "role", "gender", "company_id", "file", "dateofsubmission"];
+    const values = [name, password, userRole, gender, company_id, fullpath, Finaltoday];
+
+    // Insert email if provided, else NULL
+    if (typeof email !== 'undefined') {
+      fields.splice(1, 0, "email");
+      values.splice(1, 0, email ? email : null);
+    }
+    // Insert phone if provided, else NULL
+    if (typeof phone !== 'undefined') {
+      const phoneIndex = email ? 2 : 1;
+      fields.splice(phoneIndex, 0, "phone");
+      values.splice(phoneIndex, 0, phone ? phone : null);
+    }
+
+    const query = `INSERT INTO users (${fields.join(", ")}) VALUES (${fields.map(() => "?").join(", ")})`;
+
     return new Promise((resolve, reject) => {
       db.query(query, values, (err, result) => {
-        console.log(err);
         if (err) {
           reject(err);
         } else {
-          resolve({ userId: result.insertId, email, name });
+          resolve({ userId: result.insertId, email, name, role: userRole });
         }
       });
     });

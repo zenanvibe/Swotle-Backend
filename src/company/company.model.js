@@ -3,12 +3,15 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../../config/db.config");
 
+const ALLOWED_ROLES = ['existing_employee', 'interview_candidate', 'company', 'user'];
+
 const Auth = {
-  createUser: async (name, email, phone, password) => {
+  createUser: async (name, email, phone, password, role = 'user') => {
+    if (!ALLOWED_ROLES.includes(role)) {
+      throw new Error(`Invalid role: ${role}`);
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const status = "active"; // or set to your desired default status
-    const role = "user";
-
     const query =
       "INSERT INTO users (name, email, phone, password, status, role) VALUES (?, ?, ?, ?, ?, ?)";
     const values = [name, email, phone, hashedPassword, status, role];
@@ -37,8 +40,8 @@ const Auth = {
 SELECT 
     c.id AS company_id,
     c.company_name,
-    COUNT(DISTINCT CASE WHEN u.role = 'employee' THEN u.id END) AS number_of_employees,
-    COUNT(DISTINCT CASE WHEN u.role = 'candidate' THEN u.id END) AS number_of_candidates
+    COUNT(DISTINCT CASE WHEN u.role = 'existing_employee' THEN u.id END) AS number_of_employees,
+    COUNT(DISTINCT CASE WHEN u.role = 'interview_candidate' THEN u.id END) AS number_of_candidates
 FROM
     company c
 LEFT JOIN
@@ -164,7 +167,7 @@ WHERE
 
     // Add role filter if a specific role is passed
     if (roleFilter) {
-      if (roleFilter === "employee" || roleFilter === "candidate") {
+      if (roleFilter === "existing_employee" || roleFilter === "interview_candidate") {
         query += ` AND role = ?`;
       }
     } else {
@@ -184,7 +187,6 @@ WHERE
   },
 
   updateUser: async (userId, updates) => {
-    // Create dynamic query based on the provided fields
     const validFields = {
       name: "name",
       email: "email",
@@ -192,12 +194,12 @@ WHERE
       role: "role",
       status: "status",
     };
-
-    // Validate the field
+    if (updates.field === 'role' && !ALLOWED_ROLES.includes(updates.value)) {
+      throw new Error(`Invalid role: ${updates.value}`);
+    }
     if (!validFields[updates.field]) {
       throw new Error("Invalid field name");
     }
-
     const query = `
       UPDATE users 
       SET ${validFields[updates.field]} = ?

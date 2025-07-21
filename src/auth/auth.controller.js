@@ -147,16 +147,18 @@ const userController = {
     const { name, email, phone, role, company_id, gender, username } = req.body;
     const file = req.file; // The uploaded file
     try {
-      // Check if the user already exists
-      // const userExists = await authModel.checkUserExists(email, phone);
-      // if (userExists) {
-      //   logger.warn(
-      //     `User with the same email or phone already exists. ${email}, ${phone}`
-      //   );
-      //   return res.status(400).json({
-      //     message: "User with the same email or phone already exists.",
-      //   });
-      // }
+      // Dynamically check for duplicates only if email or phone are provided
+      if (email || phone) {
+        const userExists = await authModel.checkDuplicates({ email, phone });
+        if (userExists) {
+          logger.warn(
+            `User with the same email or phone already exists. Email: ${email}, Phone: ${phone}`
+          );
+          return res.status(400).json({
+            message: "User with the same email or phone already exists.",
+          });
+        }
+      }
 
       const password = phone; // Set the password as phone for simplicity
 

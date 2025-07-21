@@ -3,11 +3,15 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../../config/db.config");
 
+const ALLOWED_ROLES = ['existing_employee', 'interview_candidate', 'company', 'user'];
+
 const User = {
-  createUser: async (name, email, phone, password) => {
+  createUser: async (name, email, phone, password, role = 'user') => {
+    if (!ALLOWED_ROLES.includes(role)) {
+      throw new Error(`Invalid role: ${role}`);
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const status = 1; // or set to your desired default status
-    const role = 1;
     const query =
       "INSERT INTO users (name, email, phone, password, status, role) VALUES (?, ?, ?, ?, ?, ?)";
     const values = [name, email, phone, hashedPassword, status, role];
@@ -117,6 +121,9 @@ const User = {
   },
 
   updateUser: (userId, updatedData) => {
+    if (updatedData.role && !ALLOWED_ROLES.includes(updatedData.role)) {
+      throw new Error(`Invalid role: ${updatedData.role}`);
+    }
     const query = "UPDATE users SET ? WHERE user_id = ?";
     return new Promise((resolve, reject) => {
       db.query(query, [updatedData, userId], (err, result) => {

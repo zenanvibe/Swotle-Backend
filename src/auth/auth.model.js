@@ -2,7 +2,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../../config/db.config");
-const { employeeSignup } = require("./auth.controller");
 
 const ALLOWED_ROLES = ['existing_employee', 'interview_candidate', 'company', 'user'];
 
